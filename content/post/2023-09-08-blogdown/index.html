@@ -1,0 +1,56 @@
+---
+title: "Blogdown"
+author: "Yiluan Song"
+date: "2023-09-09"
+output: html_document
+---
+
+
+
+<p>Read blogdown instructions <a href="https://bookdown.org/yihui/blogdown/">here</a>.</p>
+<div id="set-up-a-blogdown-project" class="section level2">
+<h2>Set up a blogdown project</h2>
+<p>Create a R project. It is strongly recommended to make the working directory a GitHub repo for version control and deployment.</p>
+<p>Make this folder a blogdown site using R package <em>blogdown</em>.</p>
+<pre class="r"><code>install.packages(&quot;blogdown&quot;)
+blogdown::new_site()</code></pre>
+<p>HUGO may be installed automatically, but manually install HUGO if necessary.
+The example below is for windows. See full installation instructions <a href="https://gohugo.io/installation/">here</a>.</p>
+<pre class="bash"><code>winget install Hugo.Hugo.Extended</code></pre>
+<p>If the installed HUGO cannot be found, set PATH to include the path for HUGO</p>
+<pre class="r"><code>new_path &lt;- &quot;[path where HUGO is installed]&quot;
+current_path &lt;- Sys.getenv(&quot;PATH&quot;)
+new_path_list &lt;- c(current_path, new_path)
+Sys.setenv(PATH = paste(new_path_list, collapse = &quot;;&quot;))
+Sys.getenv(&quot;PATH&quot;)</code></pre>
+<p>Your working directory should have new folders and files used for the blogdown site.</p>
+<p>A sample site can be previewed in the Viewer.</p>
+<p>Stop and serve your site to preview when you make further changes.</p>
+<pre class="r"><code>blogdown::stop_server()
+blogdown::serve_site()</code></pre>
+</div>
+<div id="change-blog-content" class="section level2">
+<h2>Change blog content</h2>
+<p>Create a new R markdown for your new blog post.
+Save it as content/post/[YYYY]-[MM]-[DD]-[title]/index.Rmd following the other examples.</p>
+<p>Delete the other example blog post folders.</p>
+<p>If there are files needed to knit this R markdown, save the files in the same folder as the markdown.</p>
+</div>
+<div id="customize-website-elements" class="section level2">
+<h2>Customize website elements</h2>
+<p>The customization below applies to the theme “lithium,” but other themes might be customized in a similar fashion.</p>
+<p>Change content in “About” page, found in content/about.md.</p>
+<p>Change GitHub link to the link of this project in config.yaml.</p>
+<p>Change Twitter link also in config.yaml. You can also delete this menu item or add other ones.</p>
+<p>Change logo (also the “Home” button). Save your desired logo at themes/hugo-lithium/static/images/, where the original logo is saved. Change config.yaml params: logo: url: to the new file name.</p>
+<p>Change favicon (tab preview image). Save your desired logo at themes/hugo-lithium/static/, where the original favicon is saved. Change config.yaml params: favicon: to the new file name.</p>
+</div>
+<div id="deploy-site-as-a-github-page" class="section level2">
+<h2>Deploy site as a GitHub page</h2>
+<p>You can deploy either on GitHub or Netlify. Only GitHub deployment is discussed here.</p>
+<p>Build site locally.</p>
+<pre class="r"><code>blogdown::build_site()</code></pre>
+<p>BY default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of “publishDir: docs” in config.yaml. Build site again. Don’t forget to elete public/.</p>
+<p>To avoid some bugs in navigation using the “Home” button, I made changes to the themes/hugo-lithium/layouts/partials/nav.html file. I changed the “{{”/” | relURL }}” in line 2 to “{{ .Site.BaseURL }}”.</p>
+<p>Push changes to GitHub. Remember to build site again before pushing.</p>
+</div>

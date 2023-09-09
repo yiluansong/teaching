@@ -1,0 +1,84 @@
+---
+title: "Blogdown"
+author: "Yiluan Song"
+date: "2023-09-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Read blogdown instructions [here](https://bookdown.org/yihui/blogdown/).
+
+## Set up a blogdown project
+Create a R project. It is strongly recommended to make the working directory a GitHub repo for version control and deployment.
+
+Make this folder a blogdown site using R package _blogdown_.
+```{r, eval=F}
+install.packages("blogdown")
+blogdown::new_site()
+```
+
+HUGO may be installed automatically, but manually install HUGO if necessary.
+The example below is for windows. See full installation instructions [here](https://gohugo.io/installation/).
+```{bash, eval = F}
+winget install Hugo.Hugo.Extended
+```
+
+If the installed HUGO cannot be found, set PATH to include the path for HUGO
+```{r, eval = F}
+new_path <- "[path where HUGO is installed]"
+current_path <- Sys.getenv("PATH")
+new_path_list <- c(current_path, new_path)
+Sys.setenv(PATH = paste(new_path_list, collapse = ";"))
+Sys.getenv("PATH")
+```
+
+Your working directory should have new folders and files used for the blogdown site.
+
+A sample site can be previewed in the Viewer.
+
+Stop and serve your site to preview when you make further changes.
+```{r, eval = F}
+blogdown::stop_server()
+blogdown::serve_site()
+```
+
+## Change blog content
+Create a new R markdown for your new blog post.
+Save it as content/post/[YYYY]-[MM]-[DD]-[title]/index.Rmd following the other examples.
+
+Delete the other example blog post folders.
+
+If there are files needed to knit this R markdown, save the files in the same folder as the markdown.
+
+## Customize website elements
+The customization below applies to the theme "lithium," but other themes might be customized in a similar fashion.
+
+Change content in "About" page, found in content/about.md.
+
+Change GitHub link to the link of this project in config.yaml.
+
+Change Twitter link also in config.yaml. You can also delete this menu item or add other ones.
+
+Change logo (also the "Home" button). Save your desired logo at themes/hugo-lithium/static/images/, where the original logo is saved. Change config.yaml params: logo: url: to the new file name.
+
+Change favicon (tab preview image). Save your desired logo at themes/hugo-lithium/static/, where the original favicon is saved. Change config.yaml params: favicon: to the new file name.
+
+## Deploy site as a GitHub page
+You can deploy either on GitHub or Netlify. Only GitHub deployment is discussed here.
+
+Build site locally.
+```{r, eval = F}
+blogdown::build_site()
+```
+BY default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of "publishDir: docs" in config.yaml. Build site again. Don't forget to elete public/.
+
+To avoid some bugs in navigation using the "Home" button, I made changes to the  themes/hugo-lithium/layouts/partials/nav.html file. I changed the "{{ "/" | relURL }}" in line 2 to "{{ .Site.BaseURL }}".
+
+Push changes to GitHub. Remember to build site again before pushing.
+
+
+
+
