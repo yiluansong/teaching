@@ -79,6 +79,7 @@ To avoid some bugs in navigation using the "Home" button, I made changes to the 
 
 Push changes to GitHub. Remember to build site again before pushing.
 
+Got to repo on the GitHub website. Settings > Pages > Build and deployment. Select main branch (or whichever you want), /docs, and save.
 
 
 

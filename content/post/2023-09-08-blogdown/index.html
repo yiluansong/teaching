@@ -53,4 +53,5 @@ Save it as content/post/[YYYY]-[MM]-[DD]-[title]/index.Rmd following the other e
 <p>BY default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of “publishDir: docs” in config.yaml. Build site again. Don’t forget to elete public/.</p>
 <p>To avoid some bugs in navigation using the “Home” button, I made changes to the themes/hugo-lithium/layouts/partials/nav.html file. I changed the “{{”/” | relURL }}” in line 2 to “{{ .Site.BaseURL }}”.</p>
 <p>Push changes to GitHub. Remember to build site again before pushing.</p>
+<p>Got to repo on the GitHub website. Settings &gt; Pages &gt; Build and deployment. Select main branch (or whichever you want), /docs, and save.</p>
 </div>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>A Hugo website</title>
+    <link>/</link>
+    <description>Recent content on A Hugo website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 09 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blogdown</title>
+      <link>/2023/09/09/blogdown/</link>
+      <pubDate>Sat, 09 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/2023/09/09/blogdown/</guid>
+      <description>Read blogdown instructions here.
+Set up a blogdown project Create a R project. It is strongly recommended to make the working directory a GitHub repo for version control and deployment.
+Make this folder a blogdown site using R package blogdown.
+install.packages(&amp;quot;blogdown&amp;quot;) blogdown::new_site() HUGO may be installed automatically, but manually install HUGO if necessary. The example below is for windows. See full installation instructions here.
+winget install Hugo.Hugo.Extended If the installed HUGO cannot be found, set PATH to include the path for HUGO</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Fri, 08 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>This is a website for the Yiluan Song&amp;rsquo;s teaching and documentation.
+Dr. Yiluan Song is a postdoctoral researcher at the Michigan Institute for Data Science, supported by the Eric and Wendy Schmidt AI in Science Postdoctoral Fellowship, co-advised by Drs. Kai Zhu and Yang Chen. Yiluan is also affiliated with the Institute for Global Change Biology at the University of Michigan. Yiluan is interested in integrating mechanistic understanding and cutting-edge machine learning methods to study how ecosystems respond to global change drivers.</description>
+    </item>
+    
+  </channel>
+</rss>
