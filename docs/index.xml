@@ -14,7 +14,7 @@
       
       <guid>https://yiluansong.github.io/teaching/2023/09/09/blogdown/</guid>
       <description>Read blogdown instructions here.
-Set up a blogdown project Create a R project. It is strongly recommended to make the working directory a GitHub repo for version control and deployment.
+Set up a blogdown project Create an R project. It is strongly recommended to make the working directory a GitHub repo for version control and deployment.
 Make this folder a blogdown site using R package blogdown.
 install.packages(&amp;quot;blogdown&amp;quot;) blogdown::new_site() HUGO may be installed automatically, but manually install HUGO if necessary. The example below is for windows. See full installation instructions here.
 winget install Hugo.Hugo.Extended If the installed HUGO cannot be found, set PATH to include the path for HUGO</description>

@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Read blogdown instructions [here](https://bookdown.org/yihui/blogdown/).
 
 ## Set up a blogdown project
-Create a R project. It is strongly recommended to make the working directory a GitHub repo for version control and deployment.
+Create an R project. It is strongly recommended to make the working directory a GitHub repo for version control and deployment.
 
 Make this folder a blogdown site using R package _blogdown_.
 ```{r, eval=F}
@@ -88,6 +88,6 @@ Got to repo on the GitHub website. Settings > Pages > Build and deployment. Sele
 
 The website should deploy automatically upon pushing.
 If deployed successfully, there should be a green tick next to the commit hash. Otherwise, there is a red cross.
-Click on the red cross or green tick to inspect more details abot the deployment.
+Click on the red cross or green tick to inspect more details about the deployment.
 
-
+The website url should be "https://[username].github.io/[repo name]/". You can also find the link in the last step of deployment details.
