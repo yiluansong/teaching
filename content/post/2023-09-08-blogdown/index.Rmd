@@ -66,6 +66,8 @@ Change logo (also the "Home" button). Save your desired logo at themes/hugo-lith
 
 Change favicon (tab preview image). Save your desired logo at themes/hugo-lithium/static/, where the original favicon is saved. Change config.yaml params: favicon: to the new file name.
 
+Credit: Logo of this site was downloaded [here](https://www.pngitem.com/middle/obxRRi_otter-otter-icon-png-transparent-png/).
+
 ## Deploy site as a GitHub page
 You can deploy either on GitHub or Netlify. Only GitHub deployment is discussed here.
 
@@ -73,8 +75,7 @@ Build site locally.
 ```{r, eval = F}
 blogdown::build_site()
 ```
-BY default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of "publishDir: docs" in config.yaml. Build site again. Don't forget to delete public/.
-
+By default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of "publishDir: docs" in config.yaml. Build site again. Don't forget to delete public/.
 
 Change baseurl from relative url to absolute url of the GitHub page, otherwise GitHub page does not get the paths right. To do this, change baseurl: in line 1 of config.yaml from "/" to "https://[username].github.io/[repo name]/".
 

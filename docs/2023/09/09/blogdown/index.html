@@ -111,13 +111,14 @@ Save it as content/post/[YYYY]-[MM]-[DD]-[title]/index.Rmd following the other e
 <p>Change Twitter link also in config.yaml. You can also delete this menu item or add other ones.</p>
 <p>Change logo (also the “Home” button). Save your desired logo at themes/hugo-lithium/static/images/, where the original logo is saved. Change config.yaml params: logo: url: to the new file name.</p>
 <p>Change favicon (tab preview image). Save your desired logo at themes/hugo-lithium/static/, where the original favicon is saved. Change config.yaml params: favicon: to the new file name.</p>
+<p>Credit: Logo of this site was downloaded <a href="https://www.pngitem.com/middle/obxRRi_otter-otter-icon-png-transparent-png/">here</a>.</p>
 </div>
 <div id="deploy-site-as-a-github-page" class="section level2">
 <h2>Deploy site as a GitHub page</h2>
 <p>You can deploy either on GitHub or Netlify. Only GitHub deployment is discussed here.</p>
 <p>Build site locally.</p>
 <pre class="r"><code>blogdown::build_site()</code></pre>
-<p>BY default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of “publishDir: docs” in config.yaml. Build site again. Don’t forget to delete public/.</p>
+<p>By default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of “publishDir: docs” in config.yaml. Build site again. Don’t forget to delete public/.</p>
 <p>Change baseurl from relative url to absolute url of the GitHub page, otherwise GitHub page does not get the paths right. To do this, change baseurl: in line 1 of config.yaml from “/” to “<a href="https://%5Busername%5D.github.io/%5Brepo" class="uri">https://[username].github.io/[repo</a> name]/”.</p>
 <p>To avoid some bugs in navigation using the “Home” button, I made changes to the themes/hugo-lithium/layouts/partials/nav.html file. I changed the “{{”/” | relURL }}” in line 2 to “{{ .Site.BaseURL }}”.</p>
 <p>To make sure all content in docs/ are pushed to GitHub, comment out docs/ in .gitignore if applicable.
