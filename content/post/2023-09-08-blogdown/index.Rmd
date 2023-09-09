@@ -75,8 +75,12 @@ blogdown::build_site()
 ```
 BY default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of "publishDir: docs" in config.yaml. Build site again. Don't forget to elete public/.
 
+
+Change baseurl from relative url to absolute url of the GitHub page, otherwise GitHub page does not get the paths right. To do this, change baseurl: in line 1 of config.yaml from "/" to "https://[username].github.io/[repo name]/".
+
 To avoid some bugs in navigation using the "Home" button, I made changes to the  themes/hugo-lithium/layouts/partials/nav.html file. I changed the "{{ "/" | relURL }}" in line 2 to "{{ .Site.BaseURL }}".
 
+To make sure all content in docs/ are pushed to GitHub, comment out docs/ in .gitignore if applicable.
 Push changes to GitHub. Remember to build site again before pushing.
 
 Got to repo on the GitHub website. Settings > Pages > Build and deployment. Select main branch (or whichever you want), /docs, and save.

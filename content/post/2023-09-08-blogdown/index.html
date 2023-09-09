@@ -51,7 +51,9 @@ Save it as content/post/[YYYY]-[MM]-[DD]-[title]/index.Rmd following the other e
 <p>Build site locally.</p>
 <pre class="r"><code>blogdown::build_site()</code></pre>
 <p>BY default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of “publishDir: docs” in config.yaml. Build site again. Don’t forget to elete public/.</p>
+<p>Change baseurl from relative url to absolute url of the GitHub page, otherwise GitHub page does not get the paths right. To do this, change baseurl: in line 1 of config.yaml from “/” to “<a href="https://%5Busername%5D.github.io/%5Brepo" class="uri">https://[username].github.io/[repo</a> name]/”.</p>
 <p>To avoid some bugs in navigation using the “Home” button, I made changes to the themes/hugo-lithium/layouts/partials/nav.html file. I changed the “{{”/” | relURL }}” in line 2 to “{{ .Site.BaseURL }}”.</p>
-<p>Push changes to GitHub. Remember to build site again before pushing.</p>
+<p>To make sure all content in docs/ are pushed to GitHub, comment out docs/ in .gitignore if applicable.
+Push changes to GitHub. Remember to build site again before pushing.</p>
 <p>Got to repo on the GitHub website. Settings &gt; Pages &gt; Build and deployment. Select main branch (or whichever you want), /docs, and save.</p>
 </div>

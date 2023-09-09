@@ -1,4 +1,4 @@
-baseurl: /
+baseurl: https://yiluansong.github.io/teaching/
 publishDir: docs
 languageCode: en-US
 title: A Hugo website
