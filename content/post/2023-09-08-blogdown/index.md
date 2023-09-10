@@ -1,0 +1,100 @@
+---
+title: "Blogdown"
+author: "Yiluan Song"
+date: "2023-09-09"
+output: html_document
+---
+
+
+
+Read blogdown instructions [here](https://bookdown.org/yihui/blogdown/).
+
+## Set up a blogdown project
+Create an R project. It is strongly recommended to make the working directory a GitHub repo for version control and deployment.
+
+Make this folder a blogdown site using R package _blogdown_.
+
+```r
+install.packages("blogdown")
+blogdown::new_site()
+```
+
+HUGO may be installed automatically, but manually install HUGO if necessary.
+The example below is for windows. See full installation instructions [here](https://gohugo.io/installation/).
+
+```bash
+winget install Hugo.Hugo.Extended
+```
+
+If the installed HUGO cannot be found, set PATH to include the path for HUGO
+
+```r
+new_path <- "[path where HUGO is installed]"
+current_path <- Sys.getenv("PATH")
+new_path_list <- c(current_path, new_path)
+Sys.setenv(PATH = paste(new_path_list, collapse = ";"))
+Sys.getenv("PATH")
+```
+
+Your working directory should have new folders and files used for the blogdown site.
+
+A sample site can be previewed in the Viewer.
+
+Stop and serve your site to preview when you make further changes.
+
+```r
+blogdown::stop_server()
+blogdown::serve_site()
+```
+
+## Change blog content
+Create a new R markdown for your new blog post.
+Save it as content/post/[YYYY]-[MM]-[DD]-[title]/index.Rmd following the other examples.
+
+Delete the other example blog post folders.
+
+If there are files needed to knit this R markdown, save the files in the same folder as the markdown.
+
+## Customize website elements
+The customization below applies to the theme "lithium," but other themes might be customized in a similar fashion.
+
+Change content in "About" page, found in content/about.md.
+
+Change GitHub link to the link of this project in config.yaml.
+
+Change Twitter link also in config.yaml. You can also delete this menu item or add other ones.
+
+Change logo (also the "Home" button). Save your desired logo at themes/hugo-lithium/static/images/, where the original logo is saved. Change config.yaml params: logo: url: to the new file name.
+
+Change favicon (tab preview image). Save your desired logo at themes/hugo-lithium/static/, where the original favicon is saved. Change config.yaml params: favicon: to the new file name.
+
+Change website title in config.yaml title:.
+
+Credit: Logo of this site was downloaded [here](https://www.pngitem.com/middle/obxRRi_otter-otter-icon-png-transparent-png/).
+
+## Deploy site as a GitHub page
+You can deploy either on GitHub or Netlify. Only GitHub deployment is discussed here.
+
+Build site locally.
+
+```r
+blogdown::build_site()
+```
+By default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of "publishDir: docs" in config.yaml. Build site again. Don't forget to delete public/.
+
+Change baseurl from relative url to absolute url of the GitHub page, otherwise GitHub page does not get the paths right. To do this, change baseurl: in line 1 of config.yaml from "/" to "https://[username].github.io/[repo name]/".
+
+To avoid some bugs in navigation using the "Home" button, I made changes to the  themes/hugo-lithium/layouts/partials/nav.html file. I changed the {{ "/" | relURL }} in line 2 to {{ .Site.BaseURL }}.
+
+To fix website title display, I made changes to the themes/hugo-lithium/layouts/partials/head.html file in two places. I changed both {{ if eq .RelPermalink "/" }} in {{ if eq .Permalink .Site.BaseURL }}.
+
+To make sure all content in docs/ are pushed to GitHub, comment out docs/ in .gitignore if applicable.
+Push changes to GitHub. Remember to build site again before pushing.
+
+Go to repo on the GitHub website. Settings > Pages > Build and deployment. Select main branch (or whichever you want), /docs, and save.
+
+The website should deploy automatically upon pushing.
+If deployed successfully, there should be a green tick next to the commit hash. Otherwise, there is a red cross.
+Click on the red cross or green tick to inspect more details about the deployment.
+
+The website url should be "https://[username].github.io/[repo name]/". You can also find the link in the last step of deployment details.

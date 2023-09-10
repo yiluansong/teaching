@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 {{ hugo.Generator }}
 
-{{ if eq .RelPermalink "/" }}
+{{ if eq .Permalink .Site.BaseURL }}
 <title>{{ .Site.Title }}</title>
 <meta property="og:title" content="{{ .Site.Title }}">
 <meta property="og:type" content="website">
@@ -14,7 +14,7 @@
   <link href='{{ . | absURL }}' rel='icon' type='image/x-icon'/>
 {{ end }}
 
-{{ if eq .RelPermalink "/" }}
+{{ if eq .Permalink .Site.BaseURL }}
 <meta property="description" content="{{ .Site.Params.description }}">
 {{ else }}
   {{ if .Description }}

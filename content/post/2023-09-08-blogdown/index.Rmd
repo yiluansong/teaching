@@ -66,6 +66,8 @@ Change logo (also the "Home" button). Save your desired logo at themes/hugo-lith
 
 Change favicon (tab preview image). Save your desired logo at themes/hugo-lithium/static/, where the original favicon is saved. Change config.yaml params: favicon: to the new file name.
 
+Change website title in config.yaml title:.
+
 Credit: Logo of this site was downloaded [here](https://www.pngitem.com/middle/obxRRi_otter-otter-icon-png-transparent-png/).
 
 ## Deploy site as a GitHub page
@@ -79,12 +81,14 @@ By default, the built webpages are stored in public/, but we want to change the 
 
 Change baseurl from relative url to absolute url of the GitHub page, otherwise GitHub page does not get the paths right. To do this, change baseurl: in line 1 of config.yaml from "/" to "https://[username].github.io/[repo name]/".
 
-To avoid some bugs in navigation using the "Home" button, I made changes to the  themes/hugo-lithium/layouts/partials/nav.html file. I changed the "{{ "/" | relURL }}" in line 2 to "{{ .Site.BaseURL }}".
+To avoid some bugs in navigation using the "Home" button, I made changes to the  themes/hugo-lithium/layouts/partials/nav.html file. I changed the {{ "/" | relURL }} in line 2 to {{ .Site.BaseURL }}.
+
+To fix website title display, I made changes to the themes/hugo-lithium/layouts/partials/head.html file in two places. I changed both {{ if eq .RelPermalink "/" }} in {{ if eq .Permalink .Site.BaseURL }}.
 
 To make sure all content in docs/ are pushed to GitHub, comment out docs/ in .gitignore if applicable.
 Push changes to GitHub. Remember to build site again before pushing.
 
-Got to repo on the GitHub website. Settings > Pages > Build and deployment. Select main branch (or whichever you want), /docs, and save.
+Go to repo on the GitHub website. Settings > Pages > Build and deployment. Select main branch (or whichever you want), /docs, and save.
 
 The website should deploy automatically upon pushing.
 If deployed successfully, there should be a green tick next to the commit hash. Otherwise, there is a red cross.

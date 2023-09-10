@@ -1,0 +1,154 @@
+---
+title: "Phenology sample data"
+author: "Yiluan Song"
+date: "2023-09-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+library(tidyverse)
+library(htmltools)
+```
+
+Data prepared for Dr. Yang Chen's class in STATS605 2023 Fall, also good for others interested in exploring phenology data.
+
+This blog gives some first steps reading and visualizing the data.
+
+```{r, echo=FALSE, out.width = "800px"}
+browsable(
+  tagList(
+    tags$iframe(
+      style = "height:500px;width:100%",
+      src = "https://docs.google.com/document/d/1X65JVcC2iEuRqwa0ZyO6vMCJWHNo9WdxdO8EEEW4-RA/edit?usp=sharing"
+    )
+  )
+)
+```
+
+## Meta data for trees
+```{r}
+#| tab.cap = "Part of the meta data for tagged trees."
+metadata <- read_csv("data/metadata.csv")
+
+metadata %>%
+  head() %>%
+  flextable::regulartable() %>%
+  flextable::autofit() %>%
+  flextable::fit_to_width(8)
+```
+
+```{r}
+#| fig.cap = "Coordinates of tagged trees at two selected sites. Colors indicate species."
+metadata %>%
+  ggplot() +
+  geom_point(aes(x = lon, y = lat, col = species)) +
+  facet_wrap(. ~ site, scales = "free") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  guides(col = "none") +
+  labs(
+    x = "Longitude",
+    y = "Latitude"
+  )
+```
+
+## Discrete phenology data. 
+```{r}
+#| tab.cap = "Definitions of five phenophases."
+rnpn::npn_pheno_classes() %>%
+  filter(id %in% 1:5) %>%
+  select(id, name, description) %>%
+  flextable::regulartable() %>%
+  flextable::autofit() %>%
+  flextable::fit_to_width(8)
+```
+
+```{r}
+#| fig.cap = "Time of Yes observation of phenophase status."
+dat_discrete <- read_csv("data/discrete.csv")
+
+dat_discrete %>%
+  filter(status == "yes") %>%
+  mutate(doy = date %>% lubridate::mdy() %>% lubridate::yday()) %>%
+  arrange(phenophase_code) %>%
+  mutate(phenophase = factor(phenophase, levels = unique(phenophase))) %>%
+  ggplot() +
+  geom_segment(aes(x = doy, xend = doy, y = 0, yend = 1), alpha = 0.01, col = "dark green") +
+  facet_wrap(. ~ phenophase * site, ncol = 2) +
+  theme_classic() +
+  labs(
+    x = "Day of year",
+    y = ""
+  ) +
+  theme(axis.title.y = element_blank())
+```
+
+```{r}
+#| fig.cap = "Intensity of phenophase status."
+dat_discrete <- read_csv("data/discrete.csv")
+
+dat_discrete %>%
+  filter(!is.na(intensity)) %>%
+  mutate(doy = date %>% lubridate::mdy() %>% lubridate::yday()) %>%
+  arrange(phenophase_code) %>%
+  mutate(phenophase = factor(phenophase, levels = unique(phenophase))) %>%
+  arrange(intensity_code) %>%
+  mutate(intensity = factor(intensity, levels = unique(intensity))) %>%
+  ggplot() +
+  geom_point(aes(x = doy, y = intensity), alpha = 0.01, col = "dark green") +
+  facet_wrap(. ~ phenophase * site, ncol = 2) +
+  theme_classic() +
+  labs(
+    x = "Day of year",
+    y = "Intensity"
+  )
+```
+
+## Continuous phenology data
+```{r, fig.height=4}
+#| fig.cap = "Enhanced vegetation index at 3 m resolution."
+dat_continuous_3m <- read_csv("data/continuous_3m.csv")
+
+dat_continuous_3m %>%
+  ggplot() +
+  geom_line(aes(x = date, y = evi, group = id), alpha = 0.01, col = "dark green") +
+  facet_wrap(. ~ site) +
+  theme_classic() +
+  labs(
+    x = "Date",
+    y = "EVI"
+  )
+```
+
+```{r, fig.height=4}
+#| fig.cap = "Enhanced vegetation index at 500 m resolution."
+dat_continuous_500m <- read_csv("data/continuous_500m.csv")
+
+dat_continuous_500m %>%
+  ggplot() +
+  geom_line(aes(x = date, y = evi), col = "dark green") +
+  facet_wrap(. ~ site) +
+  theme_classic() +
+  labs(
+    x = "Date",
+    y = "EVI"
+  )
+```
+
+## Weather data
+```{r, fig.height=16}
+#| fig.cap = "Weather variables at two sites."
+dat_weather <- read_csv("data/weather.csv")
+
+dat_weather %>%
+  gather(key = "variable", value = "value", -site, -date) %>%
+  ggplot() +
+  geom_line(aes(x = date, y = value, col = variable)) +
+  facet_wrap(. ~ variable * site, scales = "free_y", ncol = 2) +
+  theme_classic() +
+  labs(
+    x = "Date",
+    y = "Value"
+  )
+```

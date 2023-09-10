@@ -6,8 +6,8 @@
 <meta name="generator" content="Hugo 0.118.2">
 
 
-<title>Blogdown - A Hugo website</title>
-<meta property="og:title" content="Blogdown - A Hugo website">
+<title>Blogdown - Yiluan Song&#39;s teaching website</title>
+<meta property="og:title" content="Blogdown - Yiluan Song&#39;s teaching website">
 
 
   <link href='https://yiluansong.github.io/teaching/otter.png' rel='icon' type='image/x-icon'/>
@@ -71,64 +71,60 @@
 
     <div class="article-content">
       
-      
-
-
-<p>Read blogdown instructions <a href="https://bookdown.org/yihui/blogdown/">here</a>.</p>
-<div id="set-up-a-blogdown-project" class="section level2">
-<h2>Set up a blogdown project</h2>
+      <p>Read blogdown instructions <a href="https://bookdown.org/yihui/blogdown/">here</a>.</p>
+<h2 id="set-up-a-blogdown-project">Set up a blogdown project</h2>
 <p>Create an R project. It is strongly recommended to make the working directory a GitHub repo for version control and deployment.</p>
 <p>Make this folder a blogdown site using R package <em>blogdown</em>.</p>
-<pre class="r"><code>install.packages(&quot;blogdown&quot;)
-blogdown::new_site()</code></pre>
+<pre><code class="language-r">install.packages(&quot;blogdown&quot;)
+blogdown::new_site()
+</code></pre>
 <p>HUGO may be installed automatically, but manually install HUGO if necessary.
 The example below is for windows. See full installation instructions <a href="https://gohugo.io/installation/">here</a>.</p>
-<pre class="bash"><code>winget install Hugo.Hugo.Extended</code></pre>
+<pre><code class="language-bash">winget install Hugo.Hugo.Extended
+</code></pre>
 <p>If the installed HUGO cannot be found, set PATH to include the path for HUGO</p>
-<pre class="r"><code>new_path &lt;- &quot;[path where HUGO is installed]&quot;
+<pre><code class="language-r">new_path &lt;- &quot;[path where HUGO is installed]&quot;
 current_path &lt;- Sys.getenv(&quot;PATH&quot;)
 new_path_list &lt;- c(current_path, new_path)
 Sys.setenv(PATH = paste(new_path_list, collapse = &quot;;&quot;))
-Sys.getenv(&quot;PATH&quot;)</code></pre>
+Sys.getenv(&quot;PATH&quot;)
+</code></pre>
 <p>Your working directory should have new folders and files used for the blogdown site.</p>
 <p>A sample site can be previewed in the Viewer.</p>
 <p>Stop and serve your site to preview when you make further changes.</p>
-<pre class="r"><code>blogdown::stop_server()
-blogdown::serve_site()</code></pre>
-</div>
-<div id="change-blog-content" class="section level2">
-<h2>Change blog content</h2>
+<pre><code class="language-r">blogdown::stop_server()
+blogdown::serve_site()
+</code></pre>
+<h2 id="change-blog-content">Change blog content</h2>
 <p>Create a new R markdown for your new blog post.
 Save it as content/post/[YYYY]-[MM]-[DD]-[title]/index.Rmd following the other examples.</p>
 <p>Delete the other example blog post folders.</p>
 <p>If there are files needed to knit this R markdown, save the files in the same folder as the markdown.</p>
-</div>
-<div id="customize-website-elements" class="section level2">
-<h2>Customize website elements</h2>
-<p>The customization below applies to the theme “lithium,” but other themes might be customized in a similar fashion.</p>
-<p>Change content in “About” page, found in content/about.md.</p>
+<h2 id="customize-website-elements">Customize website elements</h2>
+<p>The customization below applies to the theme &ldquo;lithium,&rdquo; but other themes might be customized in a similar fashion.</p>
+<p>Change content in &ldquo;About&rdquo; page, found in content/about.md.</p>
 <p>Change GitHub link to the link of this project in config.yaml.</p>
 <p>Change Twitter link also in config.yaml. You can also delete this menu item or add other ones.</p>
-<p>Change logo (also the “Home” button). Save your desired logo at themes/hugo-lithium/static/images/, where the original logo is saved. Change config.yaml params: logo: url: to the new file name.</p>
+<p>Change logo (also the &ldquo;Home&rdquo; button). Save your desired logo at themes/hugo-lithium/static/images/, where the original logo is saved. Change config.yaml params: logo: url: to the new file name.</p>
 <p>Change favicon (tab preview image). Save your desired logo at themes/hugo-lithium/static/, where the original favicon is saved. Change config.yaml params: favicon: to the new file name.</p>
+<p>Change website title in config.yaml title:.</p>
 <p>Credit: Logo of this site was downloaded <a href="https://www.pngitem.com/middle/obxRRi_otter-otter-icon-png-transparent-png/">here</a>.</p>
-</div>
-<div id="deploy-site-as-a-github-page" class="section level2">
-<h2>Deploy site as a GitHub page</h2>
+<h2 id="deploy-site-as-a-github-page">Deploy site as a GitHub page</h2>
 <p>You can deploy either on GitHub or Netlify. Only GitHub deployment is discussed here.</p>
 <p>Build site locally.</p>
-<pre class="r"><code>blogdown::build_site()</code></pre>
-<p>By default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of “publishDir: docs” in config.yaml. Build site again. Don’t forget to delete public/.</p>
-<p>Change baseurl from relative url to absolute url of the GitHub page, otherwise GitHub page does not get the paths right. To do this, change baseurl: in line 1 of config.yaml from “/” to “<a href="https://%5Busername%5D.github.io/%5Brepo" class="uri">https://[username].github.io/[repo</a> name]/”.</p>
-<p>To avoid some bugs in navigation using the “Home” button, I made changes to the themes/hugo-lithium/layouts/partials/nav.html file. I changed the “{{”/” | relURL }}” in line 2 to “{{ .Site.BaseURL }}”.</p>
+<pre><code class="language-r">blogdown::build_site()
+</code></pre>
+<p>By default, the built webpages are stored in public/, but we want to change the directory name to docs/ for GitHub deployment. To do this, add the line of &ldquo;publishDir: docs&rdquo; in config.yaml. Build site again. Don&rsquo;t forget to delete public/.</p>
+<p>Change baseurl from relative url to absolute url of the GitHub page, otherwise GitHub page does not get the paths right. To do this, change baseurl: in line 1 of config.yaml from &ldquo;/&rdquo; to &ldquo;https://[username].github.io/[repo name]/&rdquo;.</p>
+<p>To avoid some bugs in navigation using the &ldquo;Home&rdquo; button, I made changes to the  themes/hugo-lithium/layouts/partials/nav.html file. I changed the {{ &ldquo;/&rdquo; | relURL }} in line 2 to {{ .Site.BaseURL }}.</p>
+<p>To fix website title display, I made changes to the themes/hugo-lithium/layouts/partials/head.html file in two places. I changed both {{ if eq .RelPermalink &ldquo;/&rdquo; }} in {{ if eq .Permalink .Site.BaseURL }}.</p>
 <p>To make sure all content in docs/ are pushed to GitHub, comment out docs/ in .gitignore if applicable.
 Push changes to GitHub. Remember to build site again before pushing.</p>
-<p>Got to repo on the GitHub website. Settings &gt; Pages &gt; Build and deployment. Select main branch (or whichever you want), /docs, and save.</p>
+<p>Go to repo on the GitHub website. Settings &gt; Pages &gt; Build and deployment. Select main branch (or whichever you want), /docs, and save.</p>
 <p>The website should deploy automatically upon pushing.
 If deployed successfully, there should be a green tick next to the commit hash. Otherwise, there is a red cross.
 Click on the red cross or green tick to inspect more details about the deployment.</p>
-<p>The website url should be “<a href="https://%5Busername%5D.github.io/%5Brepo" class="uri">https://[username].github.io/[repo</a> name]/”. You can also find the link in the last step of deployment details.</p>
-</div>
+<p>The website url should be &ldquo;https://[username].github.io/[repo name]/&rdquo;. You can also find the link in the last step of deployment details.</p>
 
     </div>
   </article>

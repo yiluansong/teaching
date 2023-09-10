@@ -1,7 +1,7 @@
 baseurl: https://yiluansong.github.io/teaching/
 publishDir: docs
 languageCode: en-US
-title: A Hugo website
+title: Yiluan Song's teaching website
 theme: hugo-lithium
 googleAnalytics: ''
 disqusShortname: ''

@@ -2,13 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://yiluansong.github.io/teaching/</loc>
-    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://yiluansong.github.io/teaching/2023/09/09/blogdown/</loc>
-    <lastmod>2023-09-09T00:00:00+00:00</lastmod>
+    <loc>https://yiluansong.github.io/teaching/2023/09/10/phenology-sample-data/</loc>
+    <lastmod>2023-09-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yiluansong.github.io/teaching/post/</loc>
+    <lastmod>2023-09-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yiluansong.github.io/teaching/</loc>
+    <lastmod>2023-09-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yiluansong.github.io/teaching/2023/09/09/blogdown/</loc>
     <lastmod>2023-09-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://yiluansong.github.io/teaching/about/</loc>

@@ -1,12 +1,36 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>A Hugo website</title>
+    <title>Yiluan Song&#39;s teaching website</title>
     <link>https://yiluansong.github.io/teaching/</link>
-    <description>Recent content on A Hugo website</description>
+    <description>Recent content on Yiluan Song&#39;s teaching website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sat, 09 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yiluansong.github.io/teaching/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 10 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yiluansong.github.io/teaching/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Phenology sample data</title>
+      <link>https://yiluansong.github.io/teaching/2023/09/10/phenology-sample-data/</link>
+      <pubDate>Sun, 10 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yiluansong.github.io/teaching/2023/09/10/phenology-sample-data/</guid>
+      <description>Data prepared for Dr. Yang Chen’s class in STATS605 2023 Fall, also good for others interested in exploring phenology data.
+This blog gives some first steps reading and visualizing the data.
+Meta data for trees metadata &amp;lt;- read_csv(&amp;quot;data/metadata.csv&amp;quot;) metadata %&amp;gt;% head() %&amp;gt;% flextable::regulartable() %&amp;gt;% flextable::autofit() %&amp;gt;% flextable::fit_to_width(8) (#tab:unnamed-chunk-2)Part of the meta data for tagged trees. site
+site_lat
+site_lon
+id
+lat
+lon
+species
+growth_form
+HARV
+42.54278
+-72.17213
+NEON.PLA.D01.HARV.06016
+42.54368
+-72.17330</description>
+    </item>
+    
     <item>
       <title>Blogdown</title>
       <link>https://yiluansong.github.io/teaching/2023/09/09/blogdown/</link>
