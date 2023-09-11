@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.118.2">
+
+
+<title>GitHub - Yiluan Song&#39;s teaching website</title>
+<meta property="og:title" content="GitHub - Yiluan Song&#39;s teaching website">
+
+
+  <link href='https://yiluansong.github.io/teaching/otter.png' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/teaching/css/fonts.css" media="all">
+<link rel="stylesheet" href="/teaching/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://yiluansong.github.io/teaching/" class="nav-logo">
+    <img src="/teaching/images/otter.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/teaching/about/">About</a></li>
+    
+    <li><a href="https://github.com/yiluansong/teaching">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">5 min read</span>
+    
+
+    <h1 class="article-title">GitHub</h1>
+
+    
+    <span class="article-date">2023-09-10</span>
+    
+
+    <div class="article-content">
+      
+      <p>This is a practical introduction to using Git and GitHub.</p>
+<p>Guest lectures in UCSC ENVS 280 Data Science for the Environment and UofM IGCB R Session.</p>
+<h2 id="objectives">Objectives</h2>
+<ul>
+<li>Know the importance and rationale of version control and Git</li>
+<li>Learn some basic commands in Git</li>
+<li>Set up a GitHub account and your project</li>
+<li>Play with branch and fork</li>
+</ul>
+<h2 id="version-control">Version control</h2>
+<blockquote>
+<p>What is &ldquo;version control,&rdquo; and why should you care? Version control is a system that records changes to a file or set of files over time so that you can recall specific versions later.</p>
+</blockquote>
+<p>From <a href="%22https://git-scm.com/book/en/v2%22">Pro Git book</a></p>
+<p>For example, you can</p>
+<ul>
+<li>Revert selected files back to a previous state</li>
+<li>Revert the entire project back to a previous state</li>
+<li>Compare changes over time</li>
+<li>See who last modified something that might be causing a problem and when</li>
+</ul>
+<p>We now commonly use Distributed Version Control Systems (DVCSs), such as Git. In DVCSs, each client server has a full a full backup of the repository, including the history.</p>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/09/10/github/index_files/figure-html/unnamed-chunk-1-1.png" alt="Distributed version control diagram. Source: Pro Git Book." width="334" />
+<p class="caption"><span id="fig:unnamed-chunk-1"></span>Figure 1: Distributed version control diagram. Source: Pro Git Book.</p>
+</div>
+<blockquote>
+<p>Git is a distributed version-control system for tracking changes in source code. It was designed for coordinating work among programmers, but it can be used to track changes in any set of files.</p>
+</blockquote>
+<p><a href="https://www.pluralsight.com/paths/managing-source-code-with-git">Source</a></p>
+<p>GitHub and Bitbucket are two of the largest web-based hosting services, but we will focus on GitHub here.</p>
+<h2 id="git-workflow">Git workflow</h2>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/09/10/github/index_files/figure-html/unnamed-chunk-2-1.png" alt="Git workflow." width="550" />
+<p class="caption"><span id="fig:unnamed-chunk-2"></span>Figure 2: Git workflow.</p>
+</div>
+[Source](https://medium.com/@mehulgala77/github-fundamentals-clone-fetch-push-pull-fork-16d79bb16b79)
+<p>Locations: work space, staging area, local repository, remote repository</p>
+<p>Actions: add, commit, push, pull</p>
+<p>A typical workflow</p>
+<ul>
+<li>Pull changes in remote repo to work space</li>
+<li>Make changes in work space</li>
+<li>Add changes to the staging area</li>
+<li>Commit changes to local repo</li>
+<li>Push changes to remote repo</li>
+</ul>
+<p>Example commands look like this. Refer to <a href="https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository">Git Basic</a> or GPT for more commands.</p>
+<pre><code class="language-bash">git pull
+git add -A
+git commit -m &quot;[commit message]&quot;
+git push
+</code></pre>
+<p>Note: Always try to pull before you make changes locally to avoid conflicts. There would be ways to resolve conflicts if they do occur though.</p>
+<h2 id="set-up-your-git-repo">Set up your Git repo</h2>
+<p>Prerequisite 1: Register for an account on GitHub <a href="https://github.com/signup">here</a>.</p>
+<p>Prerequisite 2: Generate a token at Settings &gt; Developer Settings &gt; Personal access tokens &gt; Tokens (classic) &gt; Generate new token. Enable the access you need but for testing today enable &ldquo;repo&rdquo; at least. Save the generated token somewhere you know and safe. You will not be able to see this token from GitHub again. Read more instructions about token <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens">here</a>. Note: GitHub will soon require 2FA, so you can set that up too if you have time.</p>
+<p>Prerequisite 3: Install Git if your computer does not have it already. School HPC servers usually have it installed. To check if you have Git installed, run in your terminal</p>
+<pre><code class="language-bash">git --version
+</code></pre>
+<p>Installation differs based on your system. See instructions <a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">here</a>.</p>
+<p>Go to <a href="https://github.com/">GitHub</a> and create new repository. I usually make it Private first, add a README file,  add .gitignore(using R template if you are an R user), and choose a license (e.g., MIT).</p>
+<p>Click on green &ldquo;&lt;&gt; Code&rdquo; button and find the web URL of your repo.</p>
+<p>Configure git by running the following commands in the terminal.</p>
+<pre><code class="language-bash">git config --global user.name [Your name]
+git config --global user.email [Your email]
+git config --global credential.helper 'store --file ~/.git-credentials'
+# Git will save your credentials in ~/.git-credentials when you next enter them
+# Change path of credential file as you wish
+</code></pre>
+<p>Clone the repo from remote to work space.</p>
+<pre><code class="language-bash">cd [directory where you want to set up your work space]
+git clone https://&lt;username&gt;:&lt;token&gt;@github.com/&lt;username or organization name&gt;/&lt;repo name&gt;.git
+# This is adapted from the web URL of the repo, with credentials added
+# If you already have ~/.git-credentials set up, you can just use
+git clone https://github.com/&lt;username or organization name&gt;/&lt;repo name&gt;.git
+</code></pre>
+<p>Make it an R project. In Rstudio, create a new project from your work space. After you are in the project, you should see a tab called &ldquo;Git&rdquo; on the top right.</p>
+<p>Make some changes in your work space, such as copying your R files into your work space.</p>
+<p>Now we run some git commands in the terminal. Note: Most of these actions can be done with the RStudio GUI in the Git tab, you can play with them, but here I introduce the commands for better control and reproducibility.</p>
+<p>Make sure your directory is at your work space.</p>
+<pre><code class="language-bash">cd [directory of your work space]
+</code></pre>
+<p>Check the status.</p>
+<pre><code class="language-bash">git status
+</code></pre>
+<p>Stage all changes.</p>
+<pre><code class="language-bash">git add -A
+</code></pre>
+<p>Commit changes.</p>
+<pre><code class="language-bash">git commit -m &quot;init commit&quot;
+</code></pre>
+<p>Push changes.</p>
+<pre><code class="language-bash">git push
+</code></pre>
+<p>For help.</p>
+<pre><code class="language-bash">git --help
+</code></pre>
+<p>Look at the changes in your remote repo on GitHub.</p>
+<p>&ldquo;git clone&rdquo; applies to the first time you set up the work space on this computer. Next time, you can directly pull from remote repo.</p>
+<pre><code class="language-bash">git pull
+</code></pre>
+<p>If you have multiple contributors to this repo, or if you use multiple computers, you might not pull changes in time and run into conflicts. A common scenario is that you push but get a fatal error. You need to pull at this point. If there is no conflict, you can write a commit message for merging the remote and local repo, and push again. Sometimes there are conflicts. The files with conflicts will be changed, with some lines looking like this.</p>
+<pre><code class="language-bash">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+old code
+=======
+new code
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; [branch name]
+</code></pre>
+<p>You have to manually edit the files, add, commit, and push again.</p>
+<h2 id="branch-and-fork">Branch and fork</h2>
+<p>In order not to manage a repo with multiple collaborators more easily, you can use branch or forks.</p>
+<p>In the GitHub page of your repo, you can create a new branch. After you pull your repo, you can switch between projects using</p>
+<pre><code class="language-bash">git checkout [another branch]
+</code></pre>
+<p>You can make changes, add, commit, and push as usual.</p>
+<p>When your branch is working well, you can merge your branch into another branch, perhaps the main.</p>
+<pre><code class="language-bash">git checkout [main branch]
+git pull
+git merge [your branch]
+</code></pre>
+<p>You might have to resolve conflicts at this point. After this, add, commit, and push.</p>
+<p>If you do not work very closely as a team or would like a bit more independence, you can also fork your own copy of a repo. You can work with the fork in the same way as an independent repo, but you can &ldquo;Sync&rdquo; with the parent repo or &ldquo;Contribute&rdquo; to the parent repo.</p>
+<h2 id="others">Others</h2>
+<p>GitHub have other interesting features such as &ldquo;Issues,&ldquo;&ldquo;GitHub Actions,&rdquo; and &ldquo;GitHub pages.&rdquo; Please enjoy exploring them.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/teaching/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+  </body>
+</html>
+

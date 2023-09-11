@@ -1,0 +1,182 @@
+---
+title: "GitHub"
+author: "Yiluan Song"
+date: "2023-09-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+This is a practical introduction to using Git and GitHub.
+
+Guest lectures in UCSC ENVS 280 Data Science for the Environment and UofM IGCB R Session.
+
+## Objectives
+* Know the importance and rationale of version control and Git
+* Learn some basic commands in Git
+* Set up a GitHub account and your project
+* Play with branch and fork
+
+## Version control
+> What is "version control," and why should you care? Version control is a system that records changes to a file or set of files over time so that you can recall specific versions later.
+
+From [Pro Git book]("https://git-scm.com/book/en/v2")
+
+For example, you can
+* Revert selected files back to a previous state
+* Revert the entire project back to a previous state
+* Compare changes over time
+* See who last modified something that might be causing a problem and when
+
+We now commonly use Distributed Version Control Systems (DVCSs), such as Git. In DVCSs, each client server has a full a full backup of the repository, including the history.
+```{r, echo = F}
+#| fig.cap = "Distributed version control diagram. Source: Pro Git Book."
+magick::image_read("https://git-scm.com/book/en/v2/images/distributed.png")
+```
+
+> Git is a distributed version-control system for tracking changes in source code. It was designed for coordinating work among programmers, but it can be used to track changes in any set of files.
+
+[Source](https://www.pluralsight.com/paths/managing-source-code-with-git)
+
+GitHub and Bitbucket are two of the largest web-based hosting services, but we will focus on GitHub here. 
+
+## Git workflow
+```{r, echo = F}
+#| fig.cap = "Git workflow."
+magick::image_read("https://miro.medium.com/v2/resize:fit:1100/format:webp/1*gZX2Cs-To3k1h63hHhPPcw.png")
+```
+[Source](https://medium.com/@mehulgala77/github-fundamentals-clone-fetch-push-pull-fork-16d79bb16b79)
+
+Locations: work space, staging area, local repository, remote repository
+
+Actions: add, commit, push, pull
+
+A typical workflow
+* Pull changes in remote repo to work space
+* Make changes in work space
+* Add changes to the staging area
+* Commit changes to local repo
+* Push changes to remote repo
+
+Example commands look like this. Refer to [Git Basic](https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository) or GPT for more commands.
+
+```{bash, eval = F}
+git pull
+git add -A
+git commit -m "[commit message]"
+git push
+```
+
+Note: Always try to pull before you make changes locally to avoid conflicts. There would be ways to resolve conflicts if they do occur though.
+
+## Set up your Git repo
+
+Prerequisite 1: Register for an account on GitHub [here](https://github.com/signup).
+
+Prerequisite 2: Generate a token at Settings > Developer Settings > Personal access tokens > Tokens (classic) > Generate new token. Enable the access you need but for testing today enable "repo" at least. Save the generated token somewhere you know and safe. You will not be able to see this token from GitHub again. Read more instructions about token [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens). Note: GitHub will soon require 2FA, so you can set that up too if you have time.
+
+Prerequisite 3: Install Git if your computer does not have it already. School HPC servers usually have it installed. To check if you have Git installed, run in your terminal
+```{bash, eval = F}
+git --version
+```
+Installation differs based on your system. See instructions [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+
+
+Go to [GitHub](https://github.com/) and create new repository. I usually make it Private first, add a README file,  add .gitignore(using R template if you are an R user), and choose a license (e.g., MIT).
+
+Click on green "<> Code" button and find the web URL of your repo.
+
+Configure git by running the following commands in the terminal.
+```{bash, eval = F}
+git config --global user.name [Your name]
+git config --global user.email [Your email]
+git config --global credential.helper 'store --file ~/.git-credentials'
+# Git will save your credentials in ~/.git-credentials when you next enter them
+# Change path of credential file as you wish
+```
+
+Clone the repo from remote to work space.
+```{bash, eval = F}
+cd [directory where you want to set up your work space]
+git clone https://<username>:<token>@github.com/<username or organization name>/<repo name>.git
+# This is adapted from the web URL of the repo, with credentials added
+# If you already have ~/.git-credentials set up, you can just use
+git clone https://github.com/<username or organization name>/<repo name>.git
+```
+
+Make it an R project. In Rstudio, create a new project from your work space. After you are in the project, you should see a tab called "Git" on the top right.
+
+Make some changes in your work space, such as copying your R files into your work space.
+
+Now we run some git commands in the terminal. Note: Most of these actions can be done with the RStudio GUI in the Git tab, you can play with them, but here I introduce the commands for better control and reproducibility.
+
+Make sure your directory is at your work space.
+```{bash, eval = F}
+cd [directory of your work space]
+```
+
+Check the status.
+```{bash, eval = F}
+git status
+```
+
+Stage all changes.
+```{bash, eval = F}
+git add -A
+```
+
+Commit changes.
+```{bash, eval = F}
+git commit -m "init commit"
+```
+
+Push changes.
+```{bash, eval = F}
+git push
+```
+
+For help.
+```{bash, eval = F}
+git --help
+```
+
+Look at the changes in your remote repo on GitHub.
+
+"git clone" applies to the first time you set up the work space on this computer. Next time, you can directly pull from remote repo.
+```{bash, eval = F}
+git pull
+```
+
+If you have multiple contributors to this repo, or if you use multiple computers, you might not pull changes in time and run into conflicts. A common scenario is that you push but get a fatal error. You need to pull at this point. If there is no conflict, you can write a commit message for merging the remote and local repo, and push again. Sometimes there are conflicts. The files with conflicts will be changed, with some lines looking like this.
+```{bash, eval = F}
+<<<<<<< HEAD
+old code
+=======
+new code
+>>>>>>> [branch name]
+```
+You have to manually edit the files, add, commit, and push again.
+
+## Branch and fork
+In order not to manage a repo with multiple collaborators more easily, you can use branch or forks.
+
+In the GitHub page of your repo, you can create a new branch. After you pull your repo, you can switch between projects using 
+```{bash, eval = F}
+git checkout [another branch]
+```
+You can make changes, add, commit, and push as usual.
+
+When your branch is working well, you can merge your branch into another branch, perhaps the main.
+```{bash, eval = F}
+git checkout [main branch]
+git pull
+git merge [your branch]
+```
+You might have to resolve conflicts at this point. After this, add, commit, and push.
+
+If you do not work very closely as a team or would like a bit more independence, you can also fork your own copy of a repo. You can work with the fork in the same way as an independent repo, but you can "Sync" with the parent repo or "Contribute" to the parent repo.
+
+## Others
+GitHub have other interesting features such as "Issues,""GitHub Actions," and "GitHub pages." Please enjoy exploring them.

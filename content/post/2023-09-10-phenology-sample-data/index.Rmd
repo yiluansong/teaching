@@ -11,7 +11,7 @@ library(tidyverse)
 library(htmltools)
 ```
 
-Data prepared for Dr. Yang Chen's class in STATS605 2023 Fall, also good for others interested in exploring phenology data.
+Data prepared for Dr. Yang Chen's class STATS605 in 2023 Fall, also good for others interested in exploring phenology data.
 
 Data files and code for generating them can be found in [this GitHub repo](https://github.com/yiluansong/phenology-sample-data).
 

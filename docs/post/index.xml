@@ -8,12 +8,23 @@
     <language>en-US</language>
     <lastBuildDate>Sun, 10 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yiluansong.github.io/teaching/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>GitHub</title>
+      <link>https://yiluansong.github.io/teaching/2023/09/10/github/</link>
+      <pubDate>Sun, 10 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yiluansong.github.io/teaching/2023/09/10/github/</guid>
+      <description>This is a practical introduction to using Git and GitHub.
+Guest lectures in UCSC ENVS 280 Data Science for the Environment and UofM IGCB R Session.
+Objectives Know the importance and rationale of version control and Git Learn some basic commands in Git Set up a GitHub account and your project Play with branch and fork Version control What is &amp;ldquo;version control,&amp;rdquo; and why should you care? Version control is a system that records changes to a file or set of files over time so that you can recall specific versions later.</description>
+    </item>
+    
+    <item>
       <title>Phenology sample data</title>
       <link>https://yiluansong.github.io/teaching/2023/09/10/phenology-sample-data/</link>
       <pubDate>Sun, 10 Sep 2023 00:00:00 +0000</pubDate>
       
       <guid>https://yiluansong.github.io/teaching/2023/09/10/phenology-sample-data/</guid>
-      <description>Data prepared for Dr. Yang Chen’s class in STATS605 2023 Fall, also good for others interested in exploring phenology data.
+      <description>Data prepared for Dr. Yang Chen’s class STATS605 in 2023 Fall, also good for others interested in exploring phenology data.
 Data files and code for generating them can be found in this GitHub repo.
 This blog gives some first steps reading and visualizing the data.
 Meta data for trees metadata &amp;lt;- read_csv(&amp;quot;data/metadata.csv&amp;quot;) metadata %&amp;gt;% head() %&amp;gt;% flextable::regulartable() %&amp;gt;% flextable::autofit() %&amp;gt;% flextable::fit_to_width(8) (#tab:unnamed-chunk-2)Part of the meta data for tagged trees. site</description>
