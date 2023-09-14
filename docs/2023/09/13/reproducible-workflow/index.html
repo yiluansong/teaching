@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.118.2">
+
+
+<title>Reproducible workflow - Yiluan Song&#39;s teaching website</title>
+<meta property="og:title" content="Reproducible workflow - Yiluan Song&#39;s teaching website">
+
+
+  <link href='https://yiluansong.github.io/teaching/otter.png' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/teaching/css/fonts.css" media="all">
+<link rel="stylesheet" href="/teaching/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://yiluansong.github.io/teaching/" class="nav-logo">
+    <img src="/teaching/images/otter.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/teaching/about/">About</a></li>
+    
+    <li><a href="https://github.com/yiluansong/teaching">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">Reproducible workflow</h1>
+
+    
+    <span class="article-date">2023-09-13</span>
+    
+
+    <div class="article-content">
+      
+      <blockquote>
+<p>A research project is computationally reproducible if a second investigator (including you in the future) can recreate the final reported results of the project, including key quantitative findings, tables, and figures, given only a set of files and written instructions.</p>
+</blockquote>
+<p>Kitzes, J., Turek, D., &amp; Deniz, F. (Eds.). (2018). <em>The Practice of Reproducible Research: Case Studies and Lessons from the Data-Intensive Sciences.</em> Oakland, CA: University of California Press. <a href="http://www.practicereproducibleresearch.org/">Link to book</a></p>
+<p>In this blog, I intend to not repeat the content of the well-written book, but to collate some notes and resources for us to practice reproducible workflow.</p>
+<p>As we gradually adopt the practices below, we can make our work reproducible for ourselves, our research team, colleagues, others in the research field, and even the general public.</p>
+<h2 id="working-environment">Working environment</h2>
+<p>There are many restrictions working only on personal computers. Others, as well as ourselves in a different setting, might not be able to reproduce our work. It is important to be able to set up a working environment that can be accessed easily from most places. I recommend using cloud computing and cloud storage.</p>
+<ul>
+<li>Cloud computing
+<ul>
+<li>At UofM, there is <a href="https://arc.umich.edu/greatlakes/">Great Lakes HPC Cluster</a>. Check my <a href="https://docs.google.com/document/d/1woDxYgpYkxx88mcvJrYGtDL4RfYSCQkCbCjIp7EN7_Y/edit?usp=sharing">documentation</a> prepared for Zhu Lab for usage. There are limits on rates and quota.</li>
+<li><a href="https://aws.amazon.com/ec2/">AWS EC2 instances</a> are fairly popular and easy to use. Recommend. You have full control over your instance. Not free, but we can apply for research credit.</li>
+<li><a href="https://aws.amazon.com/ec2/">Microsoft Azure VMs</a> are similar to EC2.</li>
+<li><a href="https://azure.microsoft.com/en-us/products/virtual-machines">Google Colab</a> is a hosted Jupyter Notebook service. Free. Good for machine learning tasks.</li>
+<li><a href="https://cyverse.org/">Cyverse</a> funded by NSF is an Open Science Workspace. They host lots of workshops.</li>
+</ul>
+</li>
+<li>Cloud storage
+<ul>
+<li>At UofM, there is <a href="https://arc.umich.edu/turbo/">Turbo</a>. Check my <a href="https://docs.google.com/document/d/1woDxYgpYkxx88mcvJrYGtDL4RfYSCQkCbCjIp7EN7_Y/edit?usp=sharing">documentation</a> prepared for Zhu Lab for usage. There are limits on rates and quota.</li>
+<li>Google Drive is free for many university accounts and it can be mounted easily as a local drive. It can be accessed easily from R after authentication.</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-r"># Install the googledrive package.
+if (!require(googledrive)) {
+  install.packages(&quot;googledrive&quot;)
+}
+
+# Load the package
+library(googledrive)
+
+# OAuth2.0 flow, It would require browser authentication
+drive_auth()
+
+# List files in Google Drive
+drive_ls()
+
+# Download a file from Google Drive by specifying its name or id
+drive_download(&quot;example.txt&quot;)
+</code></pre>
+<ul>
+<li><a href="https://aws.amazon.com/s3/">AWS S3</a> buckets are fairly popular and easy to use. Recommend. You can also access it in R.</li>
+</ul>
+<pre><code class="language-r"># Install aws.s3 package if not already installed
+if (!require(aws.s3)) {
+  install.packages(&quot;aws.s3&quot;)
+}
+
+# Load aws.s3 library
+library(&quot;aws.s3&quot;)
+
+# Set up S3 access credentials
+Sys.setenv(&quot;AWS_ACCESS_KEY_ID&quot; = &quot;your_aws_access_key_here&quot;,
+            &quot;AWS_SECRET_ACCESS_KEY&quot; = &quot;your_aws_secret_access_key_here&quot;, 
+            &quot;AWS_DEFAULT_REGION&quot; = &quot;us-east-1&quot;) 
+
+# Get object list in the bucket
+bucketlist &lt;- get_bucket(bucket = &quot;your_bucket_name_here&quot;)
+
+# Read a csv file from the bucket
+data &lt;- s3read_using(FUN = read.csv, object = &quot;your_file_name_here&quot;, bucket = &quot;your_bucket_name_here&quot;)
+
+# View dataframe
+View(data)
+</code></pre>
+<ul>
+<li>
+<p><a href="https://azure.microsoft.com/en-us/products/storage/blobs">Microsoft Azure Bloc storage</a> is similar.</p>
+</li>
+<li>
+<p>Reminders</p>
+<ul>
+<li>It is important to use relative paths in your code so that they still work when you changing your working environment.</li>
+<li>Use the correct working directory. Using R projects can help with that.</li>
+<li>Use symbolic links when using external folders for storage. It is like a shortcut.</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-bash">ln -s [source] [destination]
+</code></pre>
+<h2 id="documentation-and-version-control">Documentation and version control</h2>
+<p>We make a lot of changes in our project along the way and we can easily lose track. We want to keep the deprecated work but we don&rsquo;t want to make our working directory too cluttered. We want to be able to retrieve previous work and understand what we were doing.</p>
+<ul>
+<li>Documentation
+<ul>
+<li>Always write comments for your code.</li>
+<li>Write metadata. For example, use the <a href="https://azure.microsoft.com/en-us/products/storage/blobs">EML</a> template.</li>
+<li>Name your functions and objects informatively. Here is what I do.
+<ul>
+<li>Key functions are named in the fashion of action_object_suffix. Types of actions can be: down, tidy, read, calc, plot, test, summ. Objects are the object of the action, such as &ldquo;climate,&rdquo; or &ldquo;plant&rdquo;. Suffix represent the level of subsetting or a variation, such as &ldquo;individual.&rdquo; There can be multiple suffix.</li>
+<li>Key R objects are named in the fashion of prefix_class_object_suffix. Types of classes can be: dat, v, ras, df, gg. Prefix &ldquo;ls&rdquo; means list. Object and suffix similar to above.</li>
+</ul>
+</li>
+<li>Write project meeting notes, perhaps in Google docs. They now have a shortcut to generate headings for meeting notes. Type @meeting notes and choose the meeting you are taking notes for.</li>
+</ul>
+</li>
+<li>Version control
+<ul>
+<li>GitHub is strongly recommended. See my <a href="https://yiluansong.github.io/teaching/2023/09/10/github/">previous blog</a> for a quick start.</li>
+<li>Use different branches for different stages of the project. Here is what we recommend.
+<ul>
+<li>An &ldquo;analysis&rdquo; branch for preliminary analysis. This branch may be messy.</li>
+<li>A &ldquo;manuscript&rdquo; branch to reproduce all analyses used in the manuscript during the submission stage. Code should be tidy, preferably made into package form in this branch. Data folder might be bulky, so it might be an external folder mounted with a symbolic link. An example of the structure should look like this.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-bash">your_package/
+|-- DESCRIPTION
+|-- NAMESPACE
+|-- R/
+|   |-- file1.R
+|   |-- file2.R
+|-- man/
+|   |-- file1.Rd
+|   |-- file2.Rd
+|-- alldata/
+|   |-- input/
+|   |-- intermediate/
+|   |-- output/
+|-- vignettes/
+|-- LICENSE
+</code></pre>
+<pre><code>* A &quot;release&quot; branch to provide a concise reproducible version for the public after publication. Code should be a subset of the ones in the &quot;manuscript&quot; branch, put into package. Small data files should be included in the package. There should not be dependency on external data folders. An example of the structure should look like this.
+</code></pre>
+<pre><code class="language-bash">your_package/
+|-- DESCRIPTION
+|-- NAMESPACE
+|-- R/
+|   |-- file1.R
+|   |-- file2.R
+|-- man/
+|   |-- file1.Rd
+|   |-- file2.Rd
+|-- data/
+|-- inst/
+|   |-- extdata/
+|   |-- figures/
+|   |-- doc/
+|-- Meta/
+|-- vignettes/
+|-- LICENSE
+</code></pre>
+<ul>
+<li>Use &ldquo;release&rdquo; in GitHub to mark important versions that you might come back to. Try to write release notes.</li>
+</ul>
+<h2 id="sharing-work">Sharing work</h2>
+<p>This is a key part of computational reproducibility.</p>
+<ul>
+<li>Sharing code
+<ul>
+<li>Again, GitHub (or Bitbucket).</li>
+</ul>
+</li>
+<li>Sharing code and data
+<ul>
+<li>For publications, there are many repositories that allow uploading of bundles of code and data for peer-review and publication. They also give you a permanent DOI for your code and data. Popular ones are <a href="https://zenodo.org/">Zenodo</a>, <a href="https://figshare.com/">Figshare</a>, and <a href="https://datadryad.org/stash">Dryad</a>. Zenodo and Figshare have easy interactions with GitHub.</li>
+</ul>
+</li>
+<li>Sharing working environment, code, and data
+<ul>
+<li>This is sometimes important if your project uses some software or packages that are not commonly availably, or requires specific versions of them. As you know, package installation can be very frustrating and can discourage others from reproducing your work.</li>
+<li>Provide session info in readme.</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-r">sessionInfo()
+</code></pre>
+<ul>
+<li>Use established base images such as <a href="https://rocker-project.org/">rocker</a>.</li>
+<li>Build your own docker images and upload to <a href="https://hub.docker.com/">Docker Hub</a>. You will first need a <a href="https://codepal.ai/dockerfile-writer">Dockerfile</a>. After that, you can follow the steps below.</li>
+</ul>
+<pre><code class="language-bash"># build
+docker build -t &lt;your_image_name&gt; .
+
+# test
+docker run -it &lt;your_image_name&gt;
+
+# login
+docker login
+
+# tag
+docker tag &lt;your_image_name&gt; &lt;your_docker_username&gt;/&lt;your_docker_repo&gt;:&lt;tag&gt;
+
+
+# push
+docker push &lt;your_docker_username&gt;/&lt;your_docker_repo&gt;:&lt;tag&gt;
+</code></pre>
+<h2 id="automating-workflow">Automating workflow</h2>
+<p>Even with all code and data, we might not know the exact order to load and run them.</p>
+<ul>
+<li>Write scripts as functions and make packages
+<ul>
+<li>Package <a href="https://devtools.r-lib.org/"><em>devtools</em></a> is a powerful tool for package development. You can also use the GUI of RStudio.</li>
+<li>Some resources: <a href="https://kbroman.org/pkg_primer/">R package Primer</a></li>
+</ul>
+</li>
+<li>Write R vignettes (or Jupyter notebooks)</li>
+</ul>
+<pre><code class="language-r">devtools::build_vignettes()
+
+# skip some steps if I have already generated cached vignettes and installed package
+devtools::build_vignettes(clean = F, install = F)
+
+browseVignettes(&quot;&lt;your package&gt;&quot;)
+</code></pre>
+<ul>
+<li>Use Makefile
+<ul>
+<li><a href="https://monashbioinformaticsplatform.github.io/2017-11-16-open-science-training/topics/automation.html">Tutorial</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="reporting-results">Reporting results</h2>
+<p>There is still some gap between the results from running our code and what we present in the manuscript.</p>
+<ul>
+<li>R markdown (or Jupyter notebooks)
+<ul>
+<li>One-page reports</li>
+<li>[Introduction] (<a href="https://rmarkdown.rstudio.com/">https://rmarkdown.rstudio.com/</a>)</li>
+<li>Package <a href="https://yihui.org/knitr/"><em>knitr</em></a> is a powerful tool. You can also knit in RStudio.</li>
+<li>Publish R markdown to <a href="https://docs.posit.co/how-to-guides/rsc/publish-rmd/">RStudio Connect</a></li>
+</ul>
+</li>
+<li>Bookdown
+<ul>
+<li>Several structured pages</li>
+<li><a href="https://bookdown.org/">Introduction</a></li>
+<li>You can publish it to <a href="https://bookdown.org/">bookdown.org</a></li>
+</ul>
+</li>
+<li>Blogdown
+<ul>
+<li>A series of blogs</li>
+<li>This current webpage is published through blogdown. Check my <a href="https://yiluansong.github.io/teaching/2023/09/09/blogdown/">previous blog</a> for a quick start.</li>
+<li><a href="https://bookdown.org/yihui/blogdown/">Introduction</a></li>
+<li>You can publish it as a GitHub page or on Netlify</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/teaching/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+
+    
+  </body>
+</html>
+

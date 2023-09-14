@@ -6,7 +6,27 @@
     <description>Recent content in Posts on Yiluan Song&#39;s teaching website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 10 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yiluansong.github.io/teaching/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 13 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yiluansong.github.io/teaching/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Composition analysis</title>
+      <link>https://yiluansong.github.io/teaching/2023/09/13/composition-analysis/</link>
+      <pubDate>Wed, 13 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yiluansong.github.io/teaching/2023/09/13/composition-analysis/</guid>
+      <description>Download NEON vegetation structure data. We already did this step for you.
+# install neonUtilities - skip if already installed install.packages(&amp;quot;neonUtilities&amp;quot;) # load neonUtilities library(neonUtilities) dat &amp;lt;- loadByProduct(dpID=&amp;quot;DP1.10098.001&amp;quot;, site=c(&amp;quot;BART&amp;quot;), startdate=&amp;quot;2017-01&amp;quot;, enddate=&amp;quot;2021-12&amp;quot;) write_rds(dat, &amp;quot;data.rds&amp;quot;) dat &amp;lt;- read_rds(&amp;quot;data.rds&amp;quot;) df_tree &amp;lt;- dat$vst_apparentindividual %&amp;gt;% arrange(desc(publicationDate)) %&amp;gt;% distinct(plotID, individualID, .keep_all = T) %&amp;gt;% filter(str_detect(plantStatus %&amp;gt;% tolower(), &amp;quot;live&amp;quot;)) %&amp;gt;% select(plotID, individualID) df_tree ## plotID individualID ## 1 BART_075 NEON.PLA.D01.BART.03230 ## 2 BART_075 NEON.PLA.D01.BART.04011 ## 3 BART_036 NEON.</description>
+    </item>
+    
+    <item>
+      <title>Reproducible workflow</title>
+      <link>https://yiluansong.github.io/teaching/2023/09/13/reproducible-workflow/</link>
+      <pubDate>Wed, 13 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yiluansong.github.io/teaching/2023/09/13/reproducible-workflow/</guid>
+      <description>A research project is computationally reproducible if a second investigator (including you in the future) can recreate the final reported results of the project, including key quantitative findings, tables, and figures, given only a set of files and written instructions.
+Kitzes, J., Turek, D., &amp;amp; Deniz, F. (Eds.). (2018). The Practice of Reproducible Research: Case Studies and Lessons from the Data-Intensive Sciences. Oakland, CA: University of California Press. Link to book</description>
+    </item>
+    
     <item>
       <title>GitHub</title>
       <link>https://yiluansong.github.io/teaching/2023/09/10/github/</link>
