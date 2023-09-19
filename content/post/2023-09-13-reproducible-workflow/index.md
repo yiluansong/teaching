@@ -11,7 +11,7 @@ output: html_document
 
 Kitzes, J., Turek, D., & Deniz, F. (Eds.). (2018). _The Practice of Reproducible Research: Case Studies and Lessons from the Data-Intensive Sciences._ Oakland, CA: University of California Press. [Link to book](http://www.practicereproducibleresearch.org/)
 
-In this blog, I intend to not repeat the content of the well-written book, but to collate some notes and resources for us to practice reproducible workflow.
+In this blog, I intend not to repeat the content of the well-written book, but to collate some notes and resources for us to practice reproducible workflow. (I'm writing mainly for R users here, but a lot applies to Python users.)
 
 As we gradually adopt the practices below, we can make our work reproducible for ourselves, our research team, colleagues, others in the research field, and even the general public.
 
@@ -25,67 +25,67 @@ There are many restrictions working only on personal computers. Others, as well 
   * [Cyverse](https://cyverse.org/) funded by NSF is an Open Science Workspace. They host lots of workshops.
 * Cloud storage
   * At UofM, there is [Turbo](https://arc.umich.edu/turbo/). Check my [documentation](https://docs.google.com/document/d/1woDxYgpYkxx88mcvJrYGtDL4RfYSCQkCbCjIp7EN7_Y/edit?usp=sharing) prepared for Zhu Lab for usage. There are limits on rates and quota.
-  * Google Drive is free for many university accounts and it can be mounted easily as a local drive. It can be accessed easily from R after authentication.
-
-```r
-# Install the googledrive package.
-if (!require(googledrive)) {
-  install.packages("googledrive")
-}
-
-# Load the package
-library(googledrive)
-
-# OAuth2.0 flow, It would require browser authentication
-drive_auth()
-
-# List files in Google Drive
-drive_ls()
-
-# Download a file from Google Drive by specifying its name or id
-drive_download("example.txt")
-```
+  * Google Drive provides large storage for many university accounts and it can be mounted easily as a local drive. It can be accessed easily from R after authentication. Not standard practice for sensitive data.
+  
+  ```r
+  # Install the googledrive package.
+  if (!require(googledrive)) {
+    install.packages("googledrive")
+  }
+  
+  # Load the package
+  library(googledrive)
+  
+  # OAuth2.0 flow, It would require browser authentication
+  drive_auth()
+  
+  # List files in Google Drive
+  drive_ls()
+  
+  # Download a file from Google Drive by specifying its name or id
+  drive_download("example.txt")
+  ```
   * [AWS S3](https://aws.amazon.com/s3/) buckets are fairly popular and easy to use. Recommend. You can also access it in R.
-
-```r
-# Install aws.s3 package if not already installed
-if (!require(aws.s3)) {
-  install.packages("aws.s3")
-}
-
-# Load aws.s3 library
-library("aws.s3")
-
-# Set up S3 access credentials
-Sys.setenv("AWS_ACCESS_KEY_ID" = "your_aws_access_key_here",
-            "AWS_SECRET_ACCESS_KEY" = "your_aws_secret_access_key_here", 
-            "AWS_DEFAULT_REGION" = "us-east-1") 
-
-# Get object list in the bucket
-bucketlist <- get_bucket(bucket = "your_bucket_name_here")
-
-# Read a csv file from the bucket
-data <- s3read_using(FUN = read.csv, object = "your_file_name_here", bucket = "your_bucket_name_here")
-
-# View dataframe
-View(data)
-```
-  * [Microsoft Azure Bloc storage](https://azure.microsoft.com/en-us/products/storage/blobs) is similar.
+  
+  ```r
+  # Install aws.s3 package if not already installed
+  if (!require(aws.s3)) {
+    install.packages("aws.s3")
+  }
+  
+  # Load aws.s3 library
+  library("aws.s3")
+  
+  # Set up S3 access credentials
+  Sys.setenv("AWS_ACCESS_KEY_ID" = "your_aws_access_key_here",
+              "AWS_SECRET_ACCESS_KEY" = "your_aws_secret_access_key_here", 
+              "AWS_DEFAULT_REGION" = "us-east-1") 
+  
+  # Get object list in the bucket
+  bucketlist <- get_bucket(bucket = "your_bucket_name_here")
+  
+  # Read a csv file from the bucket
+  data <- s3read_using(FUN = read.csv, object = "your_file_name_here", bucket = "your_bucket_name_here")
+  
+  # View dataframe
+  View(data)
+  ```
+  * [Microsoft Azure Blob storage](https://azure.microsoft.com/en-us/products/storage/blobs) is similar.
 
 * Reminders
   * It is important to use relative paths in your code so that they still work when you changing your working environment.
   * Use the correct working directory. Using R projects can help with that.
-  * Use symbolic links when using external folders for storage. It is like a shortcut.
-
-```bash
-ln -s [source] [destination]
-```
+  * Use symbolic links when using external folders for storage. It is like a shortcut. You won't have to change all paths in your code, but just have to set up symbolic link again when changing computing environment. This should work in Linux but not Windows.
+  
+  ```bash
+  ln -s [source] [destination]
+  ```
 
 ## Documentation and version control
 We make a lot of changes in our project along the way and we can easily lose track. We want to keep the deprecated work but we don't want to make our working directory too cluttered. We want to be able to retrieve previous work and understand what we were doing.
 * Documentation
   * Always write comments for your code.
-  * Write metadata. For example, use the [EML](https://azure.microsoft.com/en-us/products/storage/blobs) template.
+  * Write metadata. For example, use the [EML](https://eml.ecoinformatics.org/) template for ecological data.
   * Name your functions and objects informatively. Here is what I do.
     * Key functions are named in the fashion of action_object_suffix. Types of actions can be: down, tidy, read, calc, plot, test, summ. Objects are the object of the action, such as "climate," or "plant". Suffix represent the level of subsetting or a variation, such as "individual." There can be multiple suffix.
     * Key R objects are named in the fashion of prefix_class_object_suffix. Types of classes can be: dat, v, ras, df, gg. Prefix "ls" means list. Object and suffix similar to above.
@@ -94,46 +94,47 @@ We make a lot of changes in our project along the way and we can easily lose tra
   * GitHub is strongly recommended. See my [previous blog](https://yiluansong.github.io/teaching/2023/09/10/github/) for a quick start.
   * Use different branches for different stages of the project. Here is what we recommend.
     * An "analysis" branch for preliminary analysis. This branch may be messy.
-    * A "manuscript" branch to reproduce all analyses used in the manuscript during the submission stage. Code should be tidy, preferably made into package form in this branch. Data folder might be bulky, so it might be an external folder mounted with a symbolic link. An example of the structure should look like this.
-
-```bash
-your_package/
-|-- DESCRIPTION
-|-- NAMESPACE
-|-- R/
-|   |-- file1.R
-|   |-- file2.R
-|-- man/
-|   |-- file1.Rd
-|   |-- file2.Rd
-|-- alldata/
-|   |-- input/
-|   |-- intermediate/
-|   |-- output/
-|-- vignettes/
-|-- LICENSE
-```
+    * A "manuscript" branch to reproduce all analyses used in the manuscript during the submission stage. Code should be tidy, preferably made into package form in this branch. Data folder might be bulky, so it might be an external folder mounted with a symbolic link. An example of the structure looks like this.
+    
+    ```bash
+    your_package/
+    |-- DESCRIPTION
+    |-- NAMESPACE
+    |-- R/
+    |   |-- file1.R
+    |   |-- file2.R
+    |-- man/
+    |   |-- file1.Rd
+    |   |-- file2.Rd
+    |-- alldata/
+    |   |-- input/
+    |   |-- intermediate/
+    |   |-- output/
+    |-- vignettes/
+    |-- LICENSE
+    ```
+   
     * A "release" branch to provide a concise reproducible version for the public after publication. Code should be a subset of the ones in the "manuscript" branch, put into package. Small data files should be included in the package. There should not be dependency on external data folders. An example of the structure should look like this.
-
-```bash
-your_package/
-|-- DESCRIPTION
-|-- NAMESPACE
-|-- R/
-|   |-- file1.R
-|   |-- file2.R
-|-- man/
-|   |-- file1.Rd
-|   |-- file2.Rd
-|-- data/
-|-- inst/
-|   |-- extdata/
-|   |-- figures/
-|   |-- doc/
-|-- Meta/
-|-- vignettes/
-|-- LICENSE
-```
+    
+    ```bash
+    your_package/
+    |-- DESCRIPTION
+    |-- NAMESPACE
+    |-- R/
+    |   |-- file1.R
+    |   |-- file2.R
+    |-- man/
+    |   |-- file1.Rd
+    |   |-- file2.Rd
+    |-- data/
+    |-- inst/
+    |   |-- extdata/
+    |   |-- figures/
+    |   |-- doc/
+    |-- Meta/
+    |-- vignettes/
+    |-- LICENSE
+    ```
     
   * Use "release" in GitHub to mark important versions that you might come back to. Try to write release notes.
   
@@ -144,41 +145,57 @@ This is a key part of computational reproducibility.
 * Sharing code and data
   * For publications, there are many repositories that allow uploading of bundles of code and data for peer-review and publication. They also give you a permanent DOI for your code and data. Popular ones are [Zenodo](https://zenodo.org/), [Figshare](https://figshare.com/), and [Dryad](https://datadryad.org/stash). Zenodo and Figshare have easy interactions with GitHub.
 * Sharing working environment, code, and data
-  * This is sometimes important if your project uses some software or packages that are not commonly availably, or requires specific versions of them. As you know, package installation can be very frustrating and can discourage others from reproducing your work.
+  * This is sometimes important if your project uses some software or packages that are not commonly available, or requires specific versions of them. As you know, package installation can be very frustrating and can discourage others from reproducing your work.
   * Provide session info in readme.
-
-```r
-sessionInfo()
-```
+  
+  ```r
+  sessionInfo()
+  ```
   * Use established base images such as [rocker](https://rocker-project.org/).
   * Build your own docker images and upload to [Docker Hub](https://hub.docker.com/). You will first need a [Dockerfile](https://codepal.ai/dockerfile-writer). After that, you can follow the steps below.
-
-```bash
-# build
-docker build -t <your_image_name> .
-
-# test
-docker run -it <your_image_name>
-
-# login
-docker login
-
-# tag
-docker tag <your_image_name> <your_docker_username>/<your_docker_repo>:<tag>
-
-
-# push
-docker push <your_docker_username>/<your_docker_repo>:<tag>
-```
-    
+  
+  ```bash
+  # build
+  docker build -t <your_image_name> .
+  
+  # test
+  docker run -it <your_image_name>
+  
+  # login
+  docker login
+  
+  # tag
+  docker tag <your_image_name> <your_docker_username>/<your_docker_repo>:<tag>
+  
+  
+  # push
+  docker push <your_docker_username>/<your_docker_repo>:<tag>
+  ```
   
 ## Automating workflow
 Even with all code and data, we might not know the exact order to load and run them.
 
 * Write scripts as functions and make packages
-  * Package [_devtools_](https://devtools.r-lib.org/) is a powerful tool for package development. You can also use the GUI of RStudio.
+  * Package [_devtools_](https://devtools.r-lib.org/) and [_roxygens_](https://roxygen2.r-lib.org/) are powerful tools for package development. You can also use the GUI of RStudio.
+  
+  ```r
+  # create package (from parent directory)
+  devtools::create("myPackage")
+  
+  # generate the documentation
+  devtools::document("myPackage")
+  
+  # install and test package
+  devtools::install("myPackage")
+  library(myPackage)
+  
+  # build package
+  devtools::build("myPackage")
+  ```
+  
   * Some resources: [R package Primer](https://kbroman.org/pkg_primer/)
-* Write R vignettes (or Jupyter notebooks)
+
+* Write R vignettes (from R markdown)
 
 ```r
 devtools::build_vignettes()
@@ -186,25 +203,31 @@ devtools::build_vignettes()
 # skip some steps if I have already generated cached vignettes and installed package
 devtools::build_vignettes(clean = F, install = F)
 
-browseVignettes("<your package>")
+browseVignettes("myPackage")
 ```
-
-* Use Makefile
-  * [Tutorial](https://monashbioinformaticsplatform.github.io/2017-11-16-open-science-training/topics/automation.html)
+* Executes a series of tasks
+  * Write bash scripts
+    * Use cron jobs to trigger them regularly.
+  * [Makefile](https://monashbioinformaticsplatform.github.io/2017-11-16-open-science-training/topics/automation.html)
+  * [Snakemake](https://snakemake.readthedocs.io/en/stable/)
+* [GitHub Actions](https://github.com/features/actions)
+  * Build, test, and deploy our code.
+  * Run on GitHub's virtual machines.
+  * Check out their recommended workflows and documentation.
 
 ## Reporting results
 There is still some gap between the results from running our code and what we present in the manuscript.
-* R markdown (or Jupyter notebooks)
+* R markdown
   * One-page reports
-  * [Introduction] (https://rmarkdown.rstudio.com/)
-  * Package [_knitr_](https://yihui.org/knitr/) is a powerful tool. You can also knit in RStudio.
+  * You can render (knit) R markdown documents easily using RStudio. Uses package [_knitr_](https://yihui.org/knitr/).
+  * [Introduction](https://rmarkdown.rstudio.com/)
   * Publish R markdown to [RStudio Connect](https://docs.posit.co/how-to-guides/rsc/publish-rmd/)
 * Bookdown
-  * Several structured pages
+  * Several structured pages, written in R markdown
   * [Introduction](https://bookdown.org/)
-  * You can publish it to [bookdown.org](https://bookdown.org/)
+  * You can publish it to [bookdown.org](https://bookdown.org/).
 * Blogdown
-  * A series of blogs
+  * A series of blogs, also written in R markdown
   * This current webpage is published through blogdown. Check my [previous blog](https://yiluansong.github.io/teaching/2023/09/09/blogdown/) for a quick start.
   * [Introduction](https://bookdown.org/yihui/blogdown/)
-  * You can publish it as a GitHub page or on Netlify
+  * You can publish it as a GitHub page or on Netlify.
