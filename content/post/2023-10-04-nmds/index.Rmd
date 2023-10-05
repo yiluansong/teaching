@@ -44,7 +44,7 @@ PCA is a _parametric_ method for ordination. Today, we are going to add a _nonpa
 
 ```{r, echo = F}
 #| fig.cap = "Example NMDS plot."
-magick::image_read("https://jslefche.files.wordpress.com/2012/10/nmdsconvex.png")
+magick::image_read("https://jslefche.files.wordpress.com/2012/10/convex_hulls_color.png")
 ```
 
 [Source](https://jonlefcheck.net/2012/10/24/nmds-tutorial-in-r/)
@@ -294,7 +294,7 @@ Permutational multivariate analysis of variance (PERMANOVA) is a nonparametric m
 * A significant _p_ value indicates that the two groups are different in the their centroids OR dispersion in the multidimensional space.
 * It is similar to ANOVA, but it does not have many assumptions except exchangeability (usually satisfied).
 
-(The two case studies we mentioned both used PERMANOVA.)
+(The two case studies we introduced both used PERMANOVA.)
 
 In practice, we can easily use the _adonis2_ function from the _vegan_ package.
 ```{r}

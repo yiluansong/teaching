@@ -40,7 +40,7 @@ Quote from [Wikipedia](https://en.wikipedia.org/wiki/Nonparametric_statistics).
 PCA is a _parametric_ method for ordination. Today, we are going to add a _nonparametric_ method into our toolbox: non-metric multidimensional scaling (NMDS).
 
 <div class="figure">
-<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" alt="Example NMDS plot." width="250" />
+<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" alt="Example NMDS plot." width="255" />
 <p class="caption">Figure 1: Example NMDS plot.</p>
 </div>
 
@@ -455,7 +455,7 @@ Permutational multivariate analysis of variance (PERMANOVA) is a nonparametric m
 * A significant _p_ value indicates that the two groups are different in the their centroids OR dispersion in the multidimensional space.
 * It is similar to ANOVA, but it does not have many assumptions except exchangeability (usually satisfied).
 
-(The two case studies we mentioned both used PERMANOVA.)
+(The two case studies we introduced both used PERMANOVA.)
 
 In practice, we can easily use the _adonis2_ function from the _vegan_ package.
 
