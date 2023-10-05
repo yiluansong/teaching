@@ -13,10 +13,9 @@
       <pubDate>Wed, 04 Oct 2023 00:00:00 +0000</pubDate>
       
       <guid>https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/</guid>
-      <description>Guest lecture on Oct 5th, 2023.
+      <description>Guest lecture for Dr. Drew Gronewold&amp;rsquo;s class EAS 501.077 Multivariate Statistics for Environmental Science in 2023 Fall.
 Objectives Compare parametric and nonparametric methods for ordination Learn about real-life applications of NMDS Practice using NMDS in R to analyze community composition Get familiar with a statistical test, PERMANOVA Parametric or nonparametric? In previous classes, we have learned about principal component analysis (PCA).
-PCA have certain assumptions, requiring the data to be
-continuous, linear, normally distributed. Note that PCA involves calculating the Euclidean distances in the multidimensional space between samples.</description>
+PCA have certain assumptions, requiring the data to be</description>
     </item>
     
     <item>

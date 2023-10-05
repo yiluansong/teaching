@@ -7,7 +7,7 @@ output: html_document
 
 
 
-Guest lecture on Oct 5th, 2023.
+Guest lecture for Dr. Drew Gronewold's class EAS 501.077 Multivariate Statistics for Environmental Science in 2023 Fall.
 
 ## Objectives
 * Compare parametric and nonparametric methods for ordination
