@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.118.2">
+
+
+<title>Non-metric Multidimensional Scaling (NMDS) - Yiluan Song&#39;s teaching website</title>
+<meta property="og:title" content="Non-metric Multidimensional Scaling (NMDS) - Yiluan Song&#39;s teaching website">
+
+
+  <link href='https://yiluansong.github.io/teaching/otter.png' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/teaching/css/fonts.css" media="all">
+<link rel="stylesheet" href="/teaching/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://yiluansong.github.io/teaching/" class="nav-logo">
+    <img src="/teaching/images/otter.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/teaching/about/">About</a></li>
+    
+    <li><a href="https://github.com/yiluansong/teaching">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">13 min read</span>
+    
+
+    <h1 class="article-title">Non-metric Multidimensional Scaling (NMDS)</h1>
+
+    
+    <span class="article-date">2023-10-04</span>
+    
+
+    <div class="article-content">
+      
+      <p>Guest lecture on Oct 5th, 2023.</p>
+<h2 id="objectives">Objectives</h2>
+<ul>
+<li>Compare parametric and nonparametric methods for ordination</li>
+<li>Learn about real-life applications of NMDS</li>
+<li>Practice using NMDS in R to analyze community composition</li>
+<li>Get familiar with a statistical test, PERMANOVA</li>
+</ul>
+<h2 id="parametric-or-nonparametric">Parametric or nonparametric?</h2>
+<p>In previous classes, we have learned about principal component analysis (PCA).</p>
+<p>PCA have certain assumptions, requiring the data to be</p>
+<ul>
+<li>continuous,</li>
+<li>linear,</li>
+<li>normally distributed.</li>
+</ul>
+<p>Note that PCA involves calculating the Euclidean distances in the multidimensional space between samples.</p>
+<p>What if our data are</p>
+<ul>
+<li>discrete (e.g., presence/absence, category),</li>
+<li>nonlinear (e.g., day of year, precipitation),</li>
+<li>not normally distributed (e.g., count of rare species)?</li>
+</ul>
+<p>Does Euclidean distance still make sense?</p>
+<blockquote>
+<p>&ldquo;Nonparametric statistics is the type of statistics that is not restricted by assumptions concerning the nature of the population from which a sample is drawn.&rdquo;</p>
+</blockquote>
+<p>Quote from <a href="https://en.wikipedia.org/wiki/Nonparametric_statistics">Wikipedia</a>.</p>
+<p>PCA is a <em>parametric</em> method for ordination. Today, we are going to add a <em>nonparametric</em> method into our toolbox: non-metric multidimensional scaling (NMDS).</p>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-1-1.png" alt="Example NMDS plot." width="250" />
+<p class="caption">Figure 1: Example NMDS plot.</p>
+</div>
+<p><a href="https://jonlefcheck.net/2012/10/24/nmds-tutorial-in-r/">Source</a></p>
+<p>NMDS places samples that are more &ldquo;similar&rdquo; to each other closer in a low-dimensional space.</p>
+<p>Advantages of NMDS include</p>
+<ul>
+<li>accommodating multiple types of data,</li>
+<li>being used with different measures of dissimilarity.</li>
+</ul>
+<p>However, be aware of the differences with PCA. Unlike principle components in PCA, the axes in NMDS do not carry a specific meaning.</p>
+<h2 id="applications-of-nmds">Applications of NMDS</h2>
+<p>Case 1: Phytoplankton community composition (<a href="https://www.sciencedirect.com/science/article/pii/S0925857418304749">Paper</a>)</p>
+<p>Tropical urban reservoirs face the problem of phytoplankton bloom, often dominated by toxic cyanobacteria. It has been hypothesized that macrophytes (water plants) can inhibit phytoplankton, presenting an opportunity for reservoir restoration.</p>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-2-1.png" alt="Cyanobacterial blooms." width="624" />
+<p class="caption">Figure 2: Cyanobacterial blooms.</p>
+</div>
+<p><a href="https://www.nature.com/articles/s41579-018-0040-1">Huisman et al. (2019)</a></p>
+<p>In reservoirs in Singapore, we conducted a series of experiments to test macrophytes&rsquo; ability to alter phytoplankton communities and facilitate reservoir restoration.</p>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-3-1.png" alt="Set up of a mesocosm experiment." width="932" />
+<p class="caption">Figure 3: Set up of a mesocosm experiment.</p>
+</div>
+<p><a href="https://link.springer.com/article/10.1007/s10750-021-04679-7">Sim et al. (2021)</a> Fig. 1</p>
+<p>Apart from the effect of macrophytes on phytoplankton biomass, we also care about the effects on phytoplankton community composition.</p>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-4-1.png" alt="Relative abundance (biovolume) of phytoplankton taxa." width="696" />
+<p class="caption">Figure 4: Relative abundance (biovolume) of phytoplankton taxa.</p>
+</div>
+<p><a href="https://link.springer.com/article/10.1007/s10750-021-04679-7">Sim et al. (2021)</a> Fig. 3</p>
+<p>Community composition data is essentially multivariate. The (relative) abundance of each taxa is a variable, and there are usually many taxa. How do we analyze the response of all these variables together?</p>
+<p>We used NMDS to visualize the effect of macrophyte treatment on phytoplankton community composition.</p>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-5-1.png" alt="NMDS of the relative biovolumes of phytoplankton genera in the control and macrophyte treatments." width="756" />
+<p class="caption">Figure 5: NMDS of the relative biovolumes of phytoplankton genera in the control and macrophyte treatments.</p>
+</div>
+<p><a href="https://www.sciencedirect.com/science/article/pii/S0925857418304749">Mowe et al. (2019)</a> Fig. 6</p>
+<p>Here we see how the introduction of macrophyte caused a shift in phytoplankton community composition, with the shift being greater as density of macrophyte increased.</p>
+<p>Case 2: Grassland taxonomic, phylogenitic, and functional trait composition (<a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2745.13808">Paper</a>)</p>
+<p>The trajectory of early succession communities is shaped by the plant phylogenetic and trait history. Teasing apart these two processes has important implications for restoration.</p>
+<p>Holding starting species richness constant, Karimi et al. planted communities of different phylogenetic diversity (PD) and functional trait diversity (FD).</p>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-6-1.png" alt="NMDS of taxonomic, phylogenetic and functional trait composition in two types of restoration treatments." width="1064" />
+<p class="caption">Figure 6: NMDS of taxonomic, phylogenetic and functional trait composition in two types of restoration treatments.</p>
+</div>
+<p><a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2745.13808">Karimi et al. (2021)</a> Fig. 4</p>
+<p>Similar to case study 1, they examined how different treatments drive differences in community composition. Apart from taxonomic composition, they also analyzed responses in phylogenetic and functional trait composition.</p>
+<p>I highlight this study because they used a combination of data types to characterize composition.</p>
+<blockquote>
+<p>&ldquo;Functional diversity was assessed using 12 continuous leaf traits, 6 categorical traits, 8 binary root traits, seed mass, a categorical habitat moisture trait and genome size.&rdquo;</p>
+</blockquote>
+<p>They also used NMDS to study changes in the three kinds of community composition.</p>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-7-1.png" alt="NMDS of taxonomic, phylogenetic and functional trait composition before and after restoration treatment." width="1064" />
+<p class="caption">Figure 7: NMDS of taxonomic, phylogenetic and functional trait composition before and after restoration treatment.</p>
+</div>
+<p><a href="https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2745.13808">Karimi et al. (2021)</a> Fig. 4
+(Note their dissimilarity measures.)</p>
+<p>Here, we see that the PD treatment increased the dispersion of taxonomic and phylogenetic composition between communities (increased beta diversity) and caused directional shifts in functional trait composition (convergence).</p>
+<h2 id="hands-on-community-composition-analysis">Hands-on community composition analysis</h2>
+<p>There are really good NMDS <a href="https://jonlefcheck.net/2012/10/24/nmds-tutorial-in-r/">tutorial1</a> <a href="https://rpubs.com/CPEL/NMDS">tutorial 2</a> which I encourage you to try at home. Here I give another example with real-life data and some other visualization options.</p>
+<blockquote>
+<p>Background: The National Ecological Observatory Network (NEON) collects ecological and biogeochemical data with standardized protocols across 81 field sites across the United States. The Woody Plant Vegetation Structure dataset (DP1.10098) describes the structure and composition of woody vegetation through the mapping, identification, and measurement of free-standing woody plants including trees, saplings, shrubs, lianas, etc.</p>
+</blockquote>
+<p>We have downloaded NEON vegetation structure data at one site, Bartlett Experimental Forest (BART), for you to analyze the composition of woody vegetation. Please download them <a href="https://github.com/yiluansong/teaching/blob/main/content/post/2023-10-04-nmds/data.rds">here</a>.</p>
+<p>Read in some data frames.</p>
+<pre><code class="language-r">dat &lt;- read_rds(&quot;data.rds&quot;)
+
+df_tree &lt;- dat$vst_apparentindividual %&gt;%
+  arrange(desc(publicationDate)) %&gt;%
+  distinct(plotID, individualID, .keep_all = T) %&gt;%
+  filter(str_detect(plantStatus %&gt;% tolower(), &quot;live&quot;)) %&gt;%
+  select(plotID, individualID)
+
+df_tree_sp &lt;- dat$vst_mappingandtagging %&gt;%
+  arrange(desc(publicationDate)) %&gt;%
+  distinct(individualID, plotID, .keep_all = T) %&gt;%
+  select(individualID, plotID, taxonID, scientificName) %&gt;%
+  filter(!is.na(taxonID)) %&gt;%
+  filter(taxonID != &quot;2PLANT&quot;)
+
+df_plot &lt;- dat$vst_perplotperyear %&gt;%
+  arrange(desc(publicationDate)) %&gt;%
+  distinct(plotID, plotType, .keep_all = T) %&gt;%
+  select(plotID, plotType, nlcdClass, lon = decimalLongitude, lat = decimalLatitude)
+</code></pre>
+<p>Join the data frames. Each row is an individual tree (with unique individualID). Feel free to explore this dataset.</p>
+<pre><code class="language-r">df &lt;- df_tree %&gt;%
+  inner_join(df_tree_sp,
+    by = c(&quot;individualID&quot;, &quot;plotID&quot;)
+  ) %&gt;%
+  inner_join(df_plot,
+    by = c(&quot;plotID&quot;)
+  )
+df %&gt;% head(10)
+</code></pre>
+<pre><code>##      plotID            individualID taxonID                 scientificName
+## 1  BART_075 NEON.PLA.D01.BART.03230    FAGR        Fagus grandifolia Ehrh.
+## 2  BART_075 NEON.PLA.D01.BART.04011    FAGR        Fagus grandifolia Ehrh.
+## 3  BART_036 NEON.PLA.D01.BART.04548    FAGR        Fagus grandifolia Ehrh.
+## 4  BART_075 NEON.PLA.D01.BART.04702    TSCA Tsuga canadensis (L.) Carrière
+## 5  BART_075 NEON.PLA.D01.BART.03257    FAGR        Fagus grandifolia Ehrh.
+## 6  BART_075 NEON.PLA.D01.BART.03148    FAGR        Fagus grandifolia Ehrh.
+## 7  BART_075 NEON.PLA.D01.BART.03254    FAGR        Fagus grandifolia Ehrh.
+## 8  BART_075 NEON.PLA.D01.BART.04703    ACPE          Acer pensylvanicum L.
+## 9  BART_036 NEON.PLA.D01.BART.04554    FAGR        Fagus grandifolia Ehrh.
+## 10 BART_075 NEON.PLA.D01.BART.03300   BEAL2  Betula alleghaniensis Britton
+##    plotType       nlcdClass       lon      lat
+## 1     tower     mixedForest -71.28649 44.05914
+## 2     tower     mixedForest -71.28649 44.05914
+## 3     tower deciduousForest -71.28588 44.06208
+## 4     tower     mixedForest -71.28649 44.05914
+## 5     tower     mixedForest -71.28649 44.05914
+## 6     tower     mixedForest -71.28649 44.05914
+## 7     tower     mixedForest -71.28649 44.05914
+## 8     tower     mixedForest -71.28649 44.05914
+## 9     tower deciduousForest -71.28588 44.06208
+## 10    tower     mixedForest -71.28649 44.05914
+</code></pre>
+<p>Process the joined data frame to get a community composition data frame. Each row is a community (a plot). Species names are now columns.</p>
+<pre><code class="language-r">df_comm &lt;- df %&gt;%
+  group_by(plotID, plotType, nlcdClass, lat, lon, scientificName) %&gt;%
+  summarise(count = n()) %&gt;%
+  ungroup() %&gt;%
+  spread(key = &quot;scientificName&quot;, value = &quot;count&quot;, fill = 0)
+df_comm %&gt;% head(10)
+</code></pre>
+<pre><code>## # A tibble: 10 × 36
+##    plotID   plotType    nlcdClass   lat   lon `Abies sp.` Acer pensylvanicum L…¹
+##    &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;                  &lt;dbl&gt;
+##  1 BART_001 distributed mixedFor…  44.0 -71.3           0                      2
+##  2 BART_002 distributed deciduou…  44.0 -71.3           0                      6
+##  3 BART_003 distributed deciduou…  44.1 -71.3           0                      0
+##  4 BART_004 distributed mixedFor…  44.0 -71.3           0                      1
+##  5 BART_005 distributed mixedFor…  44.1 -71.3           1                      0
+##  6 BART_006 distributed deciduou…  44.1 -71.3           1                      6
+##  7 BART_007 distributed mixedFor…  44.0 -71.3           0                      0
+##  8 BART_010 distributed deciduou…  44.1 -71.3           0                      0
+##  9 BART_011 distributed mixedFor…  44.1 -71.3           0                      0
+## 10 BART_012 distributed deciduou…  44.0 -71.3           0                      0
+## # ℹ abbreviated name: ¹​`Acer pensylvanicum L.`
+## # ℹ 29 more variables: `Acer rubrum L.` &lt;dbl&gt;, `Acer saccharinum L.` &lt;dbl&gt;,
+## #   `Acer saccharum Marshall` &lt;dbl&gt;,
+## #   `Acer saccharum Marshall var. saccharum` &lt;dbl&gt;, `Acer sp.` &lt;dbl&gt;,
+## #   `Betula ×caerulea Blanch. var. caerulea` &lt;dbl&gt;,
+## #   `Betula alleghaniensis Britton` &lt;dbl&gt;, `Betula lenta L.` &lt;dbl&gt;,
+## #   `Betula papyrifera Marshall` &lt;dbl&gt;, …
+</code></pre>
+<p>We need to make this community composition data frame a matrix. Again, each row is a community (a plot) and each species is a column. Note that we leave out the metadata for plots.</p>
+<pre><code class="language-r">mat_comm &lt;- df_comm %&gt;%
+  select(-plotID, -plotType, -nlcdClass, -lon, -lat) %&gt;%
+  as.matrix()
+mat_comm [1:6, 1:6]
+</code></pre>
+<pre><code>##      Abies sp. Acer pensylvanicum L. Acer rubrum L. Acer saccharinum L.
+## [1,]         0                     2              1                   0
+## [2,]         0                     6              0                   0
+## [3,]         0                     0             15                   0
+## [4,]         0                     1              5                   0
+## [5,]         1                     0              0                   0
+## [6,]         1                     6              0                   0
+##      Acer saccharum Marshall Acer saccharum Marshall var. saccharum
+## [1,]                       0                                      1
+## [2,]                       0                                     22
+## [3,]                       0                                      7
+## [4,]                       0                                      0
+## [5,]                       0                                      0
+## [6,]                       0                                      2
+</code></pre>
+<p>With this community composition matrix, we can use the <em>metaMDS</em> function in <em>vegan</em> package to perform NMDS.</p>
+<pre><code class="language-r">set.seed(1)
+mds_comm &lt;- vegan::metaMDS(mat_comm, distant = &quot;bray&quot;, k = 4, try = 100)
+</code></pre>
+<pre><code>## Square root transformation
+## Wisconsin double standardization
+## Run 0 stress 0.08885421 
+## Run 1 stress 0.09016598 
+## Run 2 stress 0.08885805 
+## ... Procrustes: rmse 0.003813373  max resid 0.01310509 
+## Run 3 stress 0.08885508 
+## ... Procrustes: rmse 0.0002817591  max resid 0.0009507222 
+## ... Similar to previous best
+## Run 4 stress 0.08885586 
+## ... Procrustes: rmse 0.0004902184  max resid 0.001639388 
+## ... Similar to previous best
+## Run 5 stress 0.0903252 
+## Run 6 stress 0.08885492 
+## ... Procrustes: rmse 0.0002619428  max resid 0.0008819165 
+## ... Similar to previous best
+## Run 7 stress 0.08885847 
+## ... Procrustes: rmse 0.003935785  max resid 0.01353974 
+## Run 8 stress 0.08885396 
+## ... New best solution
+## ... Procrustes: rmse 0.002582129  max resid 0.008932619 
+## ... Similar to previous best
+## Run 9 stress 0.09029896 
+## Run 10 stress 0.09034585 
+## Run 11 stress 0.08893074 
+## ... Procrustes: rmse 0.009504952  max resid 0.03165667 
+## Run 12 stress 0.09032054 
+## Run 13 stress 0.08885345 
+## ... New best solution
+## ... Procrustes: rmse 0.002182506  max resid 0.007588686 
+## ... Similar to previous best
+## Run 14 stress 0.08889528 
+## ... Procrustes: rmse 0.005338802  max resid 0.01761426 
+## Run 15 stress 0.08886069 
+## ... Procrustes: rmse 0.003999398  max resid 0.01384676 
+## Run 16 stress 0.08885448 
+## ... Procrustes: rmse 0.0005095852  max resid 0.001713473 
+## ... Similar to previous best
+## Run 17 stress 0.09028926 
+## Run 18 stress 0.08886793 
+## ... Procrustes: rmse 0.005178257  max resid 0.0181378 
+## Run 19 stress 0.08885554 
+## ... Procrustes: rmse 0.002771664  max resid 0.009498437 
+## ... Similar to previous best
+## Run 20 stress 0.09016291 
+## *** Best solution repeated 3 times
+</code></pre>
+<pre><code class="language-r">mds_comm
+</code></pre>
+<pre><code>## 
+## Call:
+## vegan::metaMDS(comm = mat_comm, k = 4, try = 100, distant = &quot;bray&quot;) 
+## 
+## global Multidimensional Scaling using monoMDS
+## 
+## Data:     wisconsin(sqrt(mat_comm)) 
+## Distance: bray 
+## 
+## Dimensions: 4 
+## Stress:     0.08885345 
+## Stress type 1, weak ties
+## Best solution was repeated 3 times in 20 tries
+## The best solution was from try 13 (random start)
+## Scaling: centring, PC rotation, halfchange scaling 
+## Species: expanded scores based on 'wisconsin(sqrt(mat_comm))'
+</code></pre>
+<p>We check the stress value to find out if our NMDS has a good fit. We can also make a stressplot.</p>
+<pre><code class="language-r">mds_comm$stress
+</code></pre>
+<pre><code>## [1] 0.08885345
+</code></pre>
+<pre><code class="language-r">vegan::stressplot(mds_comm)
+</code></pre>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-14-1.png" alt="NMDS stress plot." width="672" />
+<p class="caption">Figure 8: NMDS stress plot.</p>
+</div>
+Is our stress value considered good? A rule of thumb is that stress < 0.1 is good and stress < 0.05 is excellent.
+You can increase the number of dimensions (k) to reduce stress. However, large k is usually not useful and can even be harmful.
+For more considerations, read [this chapter](https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/nmds/).
+<p>Now we can generate a basic NMDS plot. Labels in black show communities, and labels in red show species.</p>
+<pre><code class="language-r">plot(mds_comm, type = &quot;t&quot;)
+</code></pre>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-15-1.png" alt="A basic NMDS plot." width="672" />
+<p class="caption">Figure 9: A basic NMDS plot.</p>
+</div>
+<p>You can see that some communities are more similar than others, and some species tend to occur together.</p>
+<p>We can try to redraw the NMDS plot using <em>ggplot</em>. This gives you more control on the graph elements.</p>
+<pre><code class="language-r">df_nmds_comm &lt;- mds_comm %&gt;%
+  vegan::scores(display = &quot;sites&quot;) %&gt;%
+  data.frame() %&gt;%
+  bind_cols(df_comm %&gt;%
+    select(plotID, plotType, nlcdClass))
+
+df_nmds_sp &lt;- mds_comm %&gt;%
+  vegan::scores(display = &quot;species&quot;) %&gt;%
+  data.frame() %&gt;%
+  rownames_to_column(var = &quot;species&quot;)
+
+ggplot(df_nmds_comm, aes(x = NMDS1, y = NMDS2)) +
+  geom_point() +
+  ggrepel::geom_text_repel(data = df_nmds_sp, aes(NMDS1, NMDS2, label = species), color = &quot;dark grey&quot;) +
+  ggthemes::theme_few()
+</code></pre>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-16-1.png" alt="A NMDS plot drawn using ggplot." width="672" />
+<p class="caption">Figure 10: A NMDS plot drawn using ggplot.</p>
+</div>
+We ca draw ellipses based on existing grouping of these communities. In experiment, we can draw ellipses for control and treatment. In observations, we can draw ellipses for different time points. Here, I draw ellipses for communities from different land cover types.
+<pre><code class="language-r">ggplot(df_nmds_comm, aes(x = NMDS1, y = NMDS2, col = nlcdClass)) +
+  geom_point() +
+  stat_ellipse() +
+  ggrepel::geom_text_repel(data = df_nmds_sp, aes(NMDS1, NMDS2, label = species), color = &quot;dark grey&quot;) +
+  ggthemes::theme_few() +
+  coord_equal()
+</code></pre>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-17-1.png" alt="NMDS plot showing composition of communities from different land cover types." width="672" />
+<p class="caption">Figure 11: NMDS plot showing composition of communities from different land cover types.</p>
+</div>
+You can see some differences in the composition of communities from different land cover types. Note that we used the first two axes of NMDS. What if we use another two axes?
+<pre><code class="language-r">ggplot(df_nmds_comm, aes(x = NMDS3, y = NMDS4, col = nlcdClass)) +
+  geom_point() +
+  stat_ellipse() +
+  ggrepel::geom_text_repel(data = df_nmds_sp, aes(NMDS1, NMDS2, label = species), color = &quot;dark grey&quot;) +
+  ggthemes::theme_few() +
+  coord_equal()
+</code></pre>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-18-1.png" alt="NMDS plot showing composition of communities from different land cover types, using NMDS3 and NMDS4." width="672" />
+<p class="caption">Figure 12: NMDS plot showing composition of communities from different land cover types, using NMDS3 and NMDS4.</p>
+</div>
+We still see some differences using NMDS3 and NMDS4, but perhaps less distinct compared to when we used NMDS1 and NMDS2.
+<p>NEON has two types of plots, distributed and tower. Their sampling methods differ. Let&rsquo;s see their difference.</p>
+<pre><code class="language-r">ggplot(df_nmds_comm, aes(x = NMDS1, y = NMDS2, col = plotType)) +
+  geom_point() +
+  stat_ellipse() +
+  ggrepel::geom_text_repel(data = df_nmds_sp, aes(NMDS1, NMDS2, label = species), color = &quot;dark grey&quot;) +
+  ggthemes::theme_few() +
+  coord_equal()
+</code></pre>
+<div class="figure">
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-19-1.png" alt="NMDS plot showing composition of communities from different plot types." width="672" />
+<p class="caption">Figure 13: NMDS plot showing composition of communities from different plot types.</p>
+</div>
+<p>Communities from distributed plots seem to be more dispersed? The reason might be tower plots have a more constrained sampling area.</p>
+<h2 id="permanova">PERMANOVA</h2>
+<p>We have done some visualization that hopefully help us intuitively see the similarity and differences between groups of samples. What if we are asked to statistically quantify the differences between these groups? How can we get a <em>p</em> value?</p>
+<p>Permutational multivariate analysis of variance (PERMANOVA) is a nonparametric multivariate statistical permutation test.</p>
+<ul>
+<li>A significant <em>p</em> value indicates that the two groups are different in the their centroids OR dispersion in the multidimensional space.</li>
+<li>It is similar to ANOVA, but it does not have many assumptions except exchangeability (usually satisfied).</li>
+</ul>
+<p>(The two case studies we mentioned both used PERMANOVA.)</p>
+<p>In practice, we can easily use the <em>adonis2</em> function from the <em>vegan</em> package.</p>
+<pre><code class="language-r">set.seed(1)
+res_permanova &lt;- vegan::adonis2(mat_comm ~ nlcdClass, data = df_comm, permutations = 9999)
+res_permanova
+</code></pre>
+<pre><code>## Permutation test for adonis under reduced model
+## Terms added sequentially (first to last)
+## Permutation: free
+## Number of permutations: 9999
+## 
+## vegan::adonis2(formula = mat_comm ~ nlcdClass, data = df_comm, permutations = 9999)
+##           Df SumOfSqs      R2      F Pr(&gt;F)    
+## nlcdClass  2   2.1141 0.31126 8.3605  1e-04 ***
+## Residual  37   4.6781 0.68874                  
+## Total     39   6.7922 1.00000                  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</code></pre>
+<pre><code class="language-r">set.seed(1)
+res_permanova &lt;- vegan::adonis2(mat_comm ~ plotType, data = df_comm, permutations = 9999)
+res_permanova
+</code></pre>
+<pre><code>## Permutation test for adonis under reduced model
+## Terms added sequentially (first to last)
+## Permutation: free
+## Number of permutations: 9999
+## 
+## vegan::adonis2(formula = mat_comm ~ plotType, data = df_comm, permutations = 9999)
+##          Df SumOfSqs      R2      F Pr(&gt;F)    
+## plotType  1   1.0483 0.15434 6.9352  6e-04 ***
+## Residual 38   5.7439 0.84566                  
+## Total    39   6.7922 1.00000                  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</code></pre>
+<pre><code class="language-r">set.seed(1)
+res_permanova &lt;- vegan::adonis2(mat_comm ~ nlcdClass * plotType, data = df_comm, permutations = 9999)
+res_permanova
+</code></pre>
+<pre><code>## Permutation test for adonis under reduced model
+## Terms added sequentially (first to last)
+## Permutation: free
+## Number of permutations: 9999
+## 
+## vegan::adonis2(formula = mat_comm ~ nlcdClass * plotType, data = df_comm, permutations = 9999)
+##                    Df SumOfSqs      R2       F Pr(&gt;F)    
+## nlcdClass           2   2.1141 0.31126 10.0769 0.0001 ***
+## plotType            1   0.4133 0.06085  3.9399 0.0113 *  
+## nlcdClass:plotType  1   0.5933 0.08735  5.6560 0.0026 ** 
+## Residual           35   3.6715 0.54054                   
+## Total              39   6.7922 1.00000                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</code></pre>
+<p>Can you try to interpret the results of these three PERMANOVA test that correspond to the three NMDS plots above? Are the differences that we observed from NMDS plots statistically significant?</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/teaching/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

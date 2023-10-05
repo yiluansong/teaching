@@ -6,15 +6,17 @@
     <description>Recent content on Yiluan Song&#39;s teaching website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Wed, 13 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yiluansong.github.io/teaching/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 04 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yiluansong.github.io/teaching/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Composition analysis</title>
-      <link>https://yiluansong.github.io/teaching/2023/09/13/composition-analysis/</link>
-      <pubDate>Wed, 13 Sep 2023 00:00:00 +0000</pubDate>
+      <title>Non-metric Multidimensional Scaling (NMDS)</title>
+      <link>https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/</link>
+      <pubDate>Wed, 04 Oct 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://yiluansong.github.io/teaching/2023/09/13/composition-analysis/</guid>
-      <description>Download NEON vegetation structure data. We already did this step for you.
-# install neonUtilities - skip if already installed install.packages(&amp;quot;neonUtilities&amp;quot;) # load neonUtilities library(neonUtilities) dat &amp;lt;- loadByProduct(dpID=&amp;quot;DP1.10098.001&amp;quot;, site=c(&amp;quot;BART&amp;quot;), startdate=&amp;quot;2017-01&amp;quot;, enddate=&amp;quot;2021-12&amp;quot;) write_rds(dat, &amp;quot;data.rds&amp;quot;) dat &amp;lt;- read_rds(&amp;quot;data.rds&amp;quot;) df_tree &amp;lt;- dat$vst_apparentindividual %&amp;gt;% arrange(desc(publicationDate)) %&amp;gt;% distinct(plotID, individualID, .keep_all = T) %&amp;gt;% filter(str_detect(plantStatus %&amp;gt;% tolower(), &amp;quot;live&amp;quot;)) %&amp;gt;% select(plotID, individualID) df_tree ## plotID individualID ## 1 BART_075 NEON.PLA.D01.BART.03230 ## 2 BART_075 NEON.PLA.D01.BART.04011 ## 3 BART_036 NEON.</description>
+      <guid>https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/</guid>
+      <description>Guest lecture on Oct 5th, 2023.
+Objectives Compare parametric and nonparametric methods for ordination Learn about real-life applications of NMDS Practice using NMDS in R to analyze community composition Get familiar with a statistical test, PERMANOVA Parametric or nonparametric? In previous classes, we have learned about principal component analysis (PCA).
+PCA have certain assumptions, requiring the data to be
+continuous, linear, normally distributed. Note that PCA involves calculating the Euclidean distances in the multidimensional space between samples.</description>
     </item>
     
     <item>

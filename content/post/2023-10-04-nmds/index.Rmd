@@ -1,0 +1,315 @@
+---
+title: "Non-metric Multidimensional Scaling (NMDS)"
+author: "Yiluan Song"
+date: "2023-10-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+Guest lecture on Oct 5th, 2023.
+
+## Objectives
+* Compare parametric and nonparametric methods for ordination
+* Learn about real-life applications of NMDS
+* Practice using NMDS in R to analyze community composition
+* Get familiar with a statistical test, PERMANOVA
+
+## Parametric or nonparametric?
+
+In previous classes, we have learned about principal component analysis (PCA).
+
+PCA have certain assumptions, requiring the data to be
+* continuous,
+* linear,
+* normally distributed.
+
+Note that PCA involves calculating the Euclidean distances in the multidimensional space between samples.
+
+What if our data are
+* discrete (e.g., presence/absence, category),
+* nonlinear (e.g., day of year, precipitation),
+* not normally distributed (e.g., count of rare species)?
+
+Does Euclidean distance still make sense?
+
+> "Nonparametric statistics is the type of statistics that is not restricted by assumptions concerning the nature of the population from which a sample is drawn."
+
+Quote from [Wikipedia](https://en.wikipedia.org/wiki/Nonparametric_statistics).
+
+PCA is a _parametric_ method for ordination. Today, we are going to add a _nonparametric_ method into our toolbox: non-metric multidimensional scaling (NMDS).
+
+```{r, echo = F}
+#| fig.cap = "Example NMDS plot."
+magick::image_read("https://jslefche.files.wordpress.com/2012/10/nmdsconvex.png")
+```
+
+[Source](https://jonlefcheck.net/2012/10/24/nmds-tutorial-in-r/)
+
+NMDS places samples that are more "similar" to each other closer in a low-dimensional space.
+
+Advantages of NMDS include
+* accommodating multiple types of data,
+* being used with different measures of dissimilarity.
+
+However, be aware of the differences with PCA. Unlike principle components in PCA, the axes in NMDS do not carry a specific meaning.
+
+## Applications of NMDS
+
+Case 1: Phytoplankton community composition ([Paper](https://www.sciencedirect.com/science/article/pii/S0925857418304749))
+
+Tropical urban reservoirs face the problem of phytoplankton bloom, often dominated by toxic cyanobacteria. It has been hypothesized that macrophytes (water plants) can inhibit phytoplankton, presenting an opportunity for reservoir restoration.
+
+```{r, echo = F}
+#| fig.cap = "Cyanobacterial blooms."
+magick::image_read("https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41579-018-0040-1/MediaObjects/41579_2018_40_Fig1_HTML.jpg?as=webp")
+```
+
+[Huisman et al. (2019)](https://www.nature.com/articles/s41579-018-0040-1)
+
+In reservoirs in Singapore, we conducted a series of experiments to test macrophytes' ability to alter phytoplankton communities and facilitate reservoir restoration.
+
+```{r, echo = F}
+#| fig.cap = "Set up of a mesocosm experiment."
+magick::image_read("https://media.springernature.com/full/springer-static/image/art%3A10.1007%2Fs10750-021-04679-7/MediaObjects/10750_2021_4679_Fig1_HTML.png?as=webp")
+```
+
+[Sim et al. (2021)](https://link.springer.com/article/10.1007/s10750-021-04679-7) Fig. 1
+
+Apart from the effect of macrophytes on phytoplankton biomass, we also care about the effects on phytoplankton community composition.
+
+```{r, echo = F}
+#| fig.cap = "Relative abundance (biovolume) of phytoplankton taxa."
+magick::image_read("https://media.springernature.com/full/springer-static/image/art%3A10.1007%2Fs10750-021-04679-7/MediaObjects/10750_2021_4679_Fig3_HTML.png?as=webp")
+```
+
+[Sim et al. (2021)](https://link.springer.com/article/10.1007/s10750-021-04679-7) Fig. 3
+
+Community composition data is essentially multivariate. The (relative) abundance of each taxa is a variable, and there are usually many taxa. How do we analyze the response of all these variables together?
+
+We used NMDS to visualize the effect of macrophyte treatment on phytoplankton community composition.
+```{r, echo = F}
+#| fig.cap = "NMDS of the relative biovolumes of phytoplankton genera in the control and macrophyte treatments."
+magick::image_read("nmds_phytoplankton.png")
+```
+
+[Mowe et al. (2019)](https://www.sciencedirect.com/science/article/pii/S0925857418304749) Fig. 6
+
+Here we see how the introduction of macrophyte caused a shift in phytoplankton community composition, with the shift being greater as density of macrophyte increased.
+
+Case 2: Grassland taxonomic, phylogenitic, and functional trait composition ([Paper](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2745.13808))
+
+The trajectory of early succession communities is shaped by the plant phylogenetic and trait history. Teasing apart these two processes has important implications for restoration.
+
+Holding starting species richness constant, Karimi et al. planted communities of different phylogenetic diversity (PD) and functional trait diversity (FD).
+
+```{r, echo = F}
+#| fig.cap = "NMDS of taxonomic, phylogenetic and functional trait composition in two types of restoration treatments."
+magick::image_read("experiment_grassland.png")
+```
+
+[Karimi et al. (2021)](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2745.13808) Fig. 4
+
+Similar to case study 1, they examined how different treatments drive differences in community composition. Apart from taxonomic composition, they also analyzed responses in phylogenetic and functional trait composition.
+
+I highlight this study because they used a combination of data types to characterize composition.
+
+> "Functional diversity was assessed using 12 continuous leaf traits, 6 categorical traits, 8 binary root traits, seed mass, a categorical habitat moisture trait and genome size."
+
+They also used NMDS to study changes in the three kinds of community composition.
+
+```{r, echo = F}
+#| fig.cap = "NMDS of taxonomic, phylogenetic and functional trait composition before and after restoration treatment."
+magick::image_read("nmds_grassland.png")
+```
+
+[Karimi et al. (2021)](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2745.13808) Fig. 4
+(Note their dissimilarity measures.)
+
+Here, we see that the PD treatment increased the dispersion of taxonomic and phylogenetic composition between communities (increased beta diversity) and caused directional shifts in functional trait composition (convergence).
+
+## Hands-on community composition analysis
+
+There are really good NMDS [tutorial1](https://jonlefcheck.net/2012/10/24/nmds-tutorial-in-r/) [tutorial 2](https://rpubs.com/CPEL/NMDS) which I encourage you to try at home. Here I give another example with real-life data and some other visualization options.
+
+> Background: The National Ecological Observatory Network (NEON) collects ecological and biogeochemical data with standardized protocols across 81 field sites across the United States. The Woody Plant Vegetation Structure dataset (DP1.10098) describes the structure and composition of woody vegetation through the mapping, identification, and measurement of free-standing woody plants including trees, saplings, shrubs, lianas, etc.
+
+We have downloaded NEON vegetation structure data at one site, Bartlett Experimental Forest (BART), for you to analyze the composition of woody vegetation. Please download them [here](https://github.com/yiluansong/teaching/blob/main/content/post/2023-10-04-nmds/data.rds).
+```{r, eval = F, include = F}
+# install neonUtilities - skip if already installed
+install.packages("neonUtilities")
+# load neonUtilities
+library(neonUtilities)
+
+dat <- loadByProduct(dpID="DP1.10098.001", 
+                           site=c("BART"),
+                           startdate="2017-01", 
+                           enddate="2021-12")
+write_rds(dat, "data.rds")
+```
+
+Read in some data frames.
+```{r}
+dat <- read_rds("data.rds")
+
+df_tree <- dat$vst_apparentindividual %>%
+  arrange(desc(publicationDate)) %>%
+  distinct(plotID, individualID, .keep_all = T) %>%
+  filter(str_detect(plantStatus %>% tolower(), "live")) %>%
+  select(plotID, individualID)
+
+df_tree_sp <- dat$vst_mappingandtagging %>%
+  arrange(desc(publicationDate)) %>%
+  distinct(individualID, plotID, .keep_all = T) %>%
+  select(individualID, plotID, taxonID, scientificName) %>%
+  filter(!is.na(taxonID)) %>%
+  filter(taxonID != "2PLANT")
+
+df_plot <- dat$vst_perplotperyear %>%
+  arrange(desc(publicationDate)) %>%
+  distinct(plotID, plotType, .keep_all = T) %>%
+  select(plotID, plotType, nlcdClass, lon = decimalLongitude, lat = decimalLatitude)
+```
+
+Join the data frames. Each row is an individual tree (with unique individualID). Feel free to explore this dataset.
+```{r}
+#| tab.cap = "Data frame of woody vegetation at Bartlett Experimental Forest (BART)."
+df <- df_tree %>%
+  inner_join(df_tree_sp,
+    by = c("individualID", "plotID")
+  ) %>%
+  inner_join(df_plot,
+    by = c("plotID")
+  )
+df %>% head(10)
+```
+
+Process the joined data frame to get a community composition data frame. Each row is a community (a plot). Species names are now columns.
+```{r, warning=F, message=F}
+#| tab.cap = "Data frame of community composition at Bartlett Experimental Forest (BART)."
+df_comm <- df %>%
+  group_by(plotID, plotType, nlcdClass, lat, lon, scientificName) %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  spread(key = "scientificName", value = "count", fill = 0)
+df_comm %>% head(10)
+```
+
+We need to make this community composition data frame a matrix. Again, each row is a community (a plot) and each species is a column. Note that we leave out the metadata for plots.
+```{r}
+#| tab.cap = "Matrix of community composition at Bartlett Experimental Forest (BART)."
+mat_comm <- df_comm %>%
+  select(-plotID, -plotType, -nlcdClass, -lon, -lat) %>%
+  as.matrix()
+mat_comm [1:6, 1:6]
+```
+
+With this community composition matrix, we can use the _metaMDS_ function in _vegan_ package to perform NMDS.
+```{r, message = F}
+set.seed(1)
+mds_comm <- vegan::metaMDS(mat_comm, distant = "bray", k = 4, try = 100)
+mds_comm
+```
+
+We check the stress value to find out if our NMDS has a good fit. We can also make a stressplot.
+```{r}
+#| fig.cap = "NMDS stress plot."
+mds_comm$stress
+vegan::stressplot(mds_comm)
+```
+Is our stress value considered good? A rule of thumb is that stress < 0.1 is good and stress < 0.05 is excellent.
+You can increase the number of dimensions (k) to reduce stress. However, large k is usually not useful and can even be harmful.
+For more considerations, read [this chapter](https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/nmds/).
+
+Now we can generate a basic NMDS plot. Labels in black show communities, and labels in red show species.
+```{r}
+#| fig.cap = "A basic NMDS plot."
+plot(mds_comm, type = "t")
+```
+
+You can see that some communities are more similar than others, and some species tend to occur together.
+
+We can try to redraw the NMDS plot using _ggplot_. This gives you more control on the graph elements.
+```{r, warning=F}
+#| fig.cap = "A NMDS plot drawn using ggplot."
+df_nmds_comm <- mds_comm %>%
+  vegan::scores(display = "sites") %>%
+  data.frame() %>%
+  bind_cols(df_comm %>%
+    select(plotID, plotType, nlcdClass))
+
+df_nmds_sp <- mds_comm %>%
+  vegan::scores(display = "species") %>%
+  data.frame() %>%
+  rownames_to_column(var = "species")
+
+ggplot(df_nmds_comm, aes(x = NMDS1, y = NMDS2)) +
+  geom_point() +
+  ggrepel::geom_text_repel(data = df_nmds_sp, aes(NMDS1, NMDS2, label = species), color = "dark grey") +
+  ggthemes::theme_few()
+```
+We ca draw ellipses based on existing grouping of these communities. In experiment, we can draw ellipses for control and treatment. In observations, we can draw ellipses for different time points. Here, I draw ellipses for communities from different land cover types.
+```{r, warning=F}
+#| fig.cap = "NMDS plot showing composition of communities from different land cover types."
+ggplot(df_nmds_comm, aes(x = NMDS1, y = NMDS2, col = nlcdClass)) +
+  geom_point() +
+  stat_ellipse() +
+  ggrepel::geom_text_repel(data = df_nmds_sp, aes(NMDS1, NMDS2, label = species), color = "dark grey") +
+  ggthemes::theme_few() +
+  coord_equal()
+```
+You can see some differences in the composition of communities from different land cover types. Note that we used the first two axes of NMDS. What if we use another two axes?
+```{r, warning = F}
+#| fig.cap = "NMDS plot showing composition of communities from different land cover types, using NMDS3 and NMDS4."
+ggplot(df_nmds_comm, aes(x = NMDS3, y = NMDS4, col = nlcdClass)) +
+  geom_point() +
+  stat_ellipse() +
+  ggrepel::geom_text_repel(data = df_nmds_sp, aes(NMDS1, NMDS2, label = species), color = "dark grey") +
+  ggthemes::theme_few() +
+  coord_equal()
+```
+We still see some differences using NMDS3 and NMDS4, but perhaps less distinct compared to when we used NMDS1 and NMDS2.
+
+NEON has two types of plots, distributed and tower. Their sampling methods differ. Let's see their difference.
+```{r, warning = F}
+#| fig.cap = "NMDS plot showing composition of communities from different plot types."
+ggplot(df_nmds_comm, aes(x = NMDS1, y = NMDS2, col = plotType)) +
+  geom_point() +
+  stat_ellipse() +
+  ggrepel::geom_text_repel(data = df_nmds_sp, aes(NMDS1, NMDS2, label = species), color = "dark grey") +
+  ggthemes::theme_few() +
+  coord_equal()
+```
+
+Communities from distributed plots seem to be more dispersed? The reason might be tower plots have a more constrained sampling area.
+
+## PERMANOVA
+
+We have done some visualization that hopefully help us intuitively see the similarity and differences between groups of samples. What if we are asked to statistically quantify the differences between these groups? How can we get a _p_ value?
+
+Permutational multivariate analysis of variance (PERMANOVA) is a nonparametric multivariate statistical permutation test.
+* A significant _p_ value indicates that the two groups are different in the their centroids OR dispersion in the multidimensional space.
+* It is similar to ANOVA, but it does not have many assumptions except exchangeability (usually satisfied).
+
+(The two case studies we mentioned both used PERMANOVA.)
+
+In practice, we can easily use the _adonis2_ function from the _vegan_ package.
+```{r}
+set.seed(1)
+res_permanova <- vegan::adonis2(mat_comm ~ nlcdClass, data = df_comm, permutations = 9999)
+res_permanova
+
+set.seed(1)
+res_permanova <- vegan::adonis2(mat_comm ~ plotType, data = df_comm, permutations = 9999)
+res_permanova
+
+set.seed(1)
+res_permanova <- vegan::adonis2(mat_comm ~ nlcdClass * plotType, data = df_comm, permutations = 9999)
+res_permanova
+```
+Can you try to interpret the results of these three PERMANOVA test that correspond to the three NMDS plots above? Are the differences that we observed from NMDS plots statistically significant?
+
+
