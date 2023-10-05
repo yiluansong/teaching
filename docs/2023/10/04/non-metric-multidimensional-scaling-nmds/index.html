@@ -101,7 +101,7 @@
 <p>Quote from <a href="https://en.wikipedia.org/wiki/Nonparametric_statistics">Wikipedia</a>.</p>
 <p>PCA is a <em>parametric</em> method for ordination. Today, we are going to add a <em>nonparametric</em> method into our toolbox: non-metric multidimensional scaling (NMDS).</p>
 <div class="figure">
-<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-1-1.png" alt="Example NMDS plot." width="255" />
+<img src="https://yiluansong.github.io/teaching/2023/10/04/non-metric-multidimensional-scaling-nmds/index_files/figure-html/unnamed-chunk-1-1.png" alt="Example NMDS plot." width="600" />
 <p class="caption">Figure 1: Example NMDS plot.</p>
 </div>
 <p><a href="https://jonlefcheck.net/2012/10/24/nmds-tutorial-in-r/">Source</a></p>
@@ -354,7 +354,7 @@ mds_comm &lt;- vegan::metaMDS(mat_comm, distant = &quot;bray&quot;, k = 4, try =
 </div>
 Is our stress value considered good? A rule of thumb is that stress < 0.1 is good and stress < 0.05 is excellent.
 You can increase the number of dimensions (k) to reduce stress. However, large k is usually not useful and can even be harmful.
-For more considerations, read [this chapter](https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/nmds/).
+<p>For more considerations, read this <a href="https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/nmds/">chapter</a>.</p>
 <p>Now we can generate a basic NMDS plot. Labels in black show communities, and labels in red show species.</p>
 <pre><code class="language-r">plot(mds_comm, type = &quot;t&quot;)
 </code></pre>

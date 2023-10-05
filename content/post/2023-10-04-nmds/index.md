@@ -40,7 +40,7 @@ Quote from [Wikipedia](https://en.wikipedia.org/wiki/Nonparametric_statistics).
 PCA is a _parametric_ method for ordination. Today, we are going to add a _nonparametric_ method into our toolbox: non-metric multidimensional scaling (NMDS).
 
 <div class="figure">
-<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" alt="Example NMDS plot." width="255" />
+<img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" alt="Example NMDS plot." width="600" />
 <p class="caption">Figure 1: Example NMDS plot.</p>
 </div>
 
@@ -358,7 +358,8 @@ vegan::stressplot(mds_comm)
 </div>
 Is our stress value considered good? A rule of thumb is that stress < 0.1 is good and stress < 0.05 is excellent.
 You can increase the number of dimensions (k) to reduce stress. However, large k is usually not useful and can even be harmful.
-For more considerations, read [this chapter](https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/nmds/).
+
+For more considerations, read this [chapter](https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/nmds/).
 
 Now we can generate a basic NMDS plot. Labels in black show communities, and labels in red show species.
 

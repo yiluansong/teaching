@@ -44,7 +44,8 @@ PCA is a _parametric_ method for ordination. Today, we are going to add a _nonpa
 
 ```{r, echo = F}
 #| fig.cap = "Example NMDS plot."
-magick::image_read("https://jslefche.files.wordpress.com/2012/10/convex_hulls_color.png")
+magick::image_read("https://jslefche.files.wordpress.com/2012/10/convex_hulls_color.png") %>% 
+  magick::image_resize("1200x")
 ```
 
 [Source](https://jonlefcheck.net/2012/10/24/nmds-tutorial-in-r/)
@@ -222,7 +223,8 @@ vegan::stressplot(mds_comm)
 ```
 Is our stress value considered good? A rule of thumb is that stress < 0.1 is good and stress < 0.05 is excellent.
 You can increase the number of dimensions (k) to reduce stress. However, large k is usually not useful and can even be harmful.
-For more considerations, read [this chapter](https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/nmds/).
+
+For more considerations, read this [chapter](https://uw.pressbooks.pub/appliedmultivariatestatistics/chapter/nmds/).
 
 Now we can generate a basic NMDS plot. Labels in black show communities, and labels in red show species.
 ```{r}
