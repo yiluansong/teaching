@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.118.2">
+
+
+<title>CI/CD - Yiluan Song&#39;s teaching website</title>
+<meta property="og:title" content="CI/CD - Yiluan Song&#39;s teaching website">
+
+
+  <link href='https://yiluansong.github.io/teaching/otter.png' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/teaching/css/fonts.css" media="all">
+<link rel="stylesheet" href="/teaching/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://yiluansong.github.io/teaching/" class="nav-logo">
+    <img src="/teaching/images/otter.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/teaching/about/">About</a></li>
+    
+    <li><a href="https://github.com/yiluansong/teaching">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">8 min read</span>
+    
+
+    <h1 class="article-title">CI/CD</h1>
+
+    
+    <span class="article-date">2025-01-28</span>
+    
+
+    <div class="article-content">
+      
+      <h2 id="introduction">Introduction</h2>
+<p>In this tutorial, we&rsquo;ll walk through the steps of setting up a continuous integration  (CI) pipeline using <a href="https://docs.github.com/en/actions">GitHub Actions</a>. We will also demonstrate how to achieve continuous deployment (CD) to two cloud-based platforms, a more specialized shinyapps.io and a more general <a href="https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html">AWS ECR</a> and <a href="https://docs.aws.amazon.com/apprunner/latest/dg/what-is-apprunner.html">AWS App Runner</a>.</p>
+<p>We will specifically be focusing on deploying a Shiny app, but the concepts can easily be adapted for any application. <a href="https://github.com/zhulabgroup/phenology-website">Here</a> is my repository as an example.</p>
+<h2 id="prepare-for-deployment-on-shinyappsio">Prepare for deployment on Shinyapps.io</h2>
+<h3 id="get-credentials">Get credentials</h3>
+<p>To host a Shiny app on shinyapps.io, you need to have a <a href="https://www.shinyapps.io/">shinyapps.io</a> account. You can sign up for a free account if you don&rsquo;t have one. Follow the steps below to get your shinyapps.io credentials.</p>
+<ol>
+<li>Go to your <a href="https://www.shinyapps.io/">shinyapps.io</a> account and log in.</li>
+<li>Navigate to <strong>Account</strong> and <strong>Tokens</strong>.</li>
+<li>Click on <strong>Add Token</strong> to generate a new token. Skip if you already have one.</li>
+<li>Click on <strong>Show</strong> to reveal the credentials.</li>
+</ol>
+<h3 id="setting-up-github-secrets">Setting up GitHub secrets</h3>
+<p>For secure communication between GitHub and the shinyapps.io, we need to store sensitive credentials in GitHub Secrets. You will need the following secrets: <code>SHINYAPPS_USER</code>, <code>SHINYAPPS_TOKEN</code>, and <code>SHINYAPPS_SECRET</code>.</p>
+<p>To add secrets to your repository:</p>
+<ol>
+<li>Go to the repository&rsquo;s <strong>Settings</strong>.</li>
+<li>Navigate to <strong>Secrets</strong>.</li>
+<li>Click on <strong>New repository secret</strong> and add the relevant keys.</li>
+</ol>
+<h2 id="prepare-for-deployment-on-aws-app-runner">Prepare for deployment on AWS App Runner</h2>
+<p>To host a Shiny app on AWS App Runner, you need to have an AWS account with access to ECR and App Runner services. Set up an AWS account if necessary.</p>
+<h3 id="prepare-a-docker-file">Prepare a Docker file</h3>
+<p>We need a Dockerfile to build the Docker image of the Shiny app. Here is my example of a Dockerfile.</p>
+<pre><code># Use a base image with R and Shiny Server pre-installed
+FROM rocker/shiny-verse:latest
+
+# Install system libraries for geospatial analysis
+RUN apt-get update \
+  &amp;&amp; apt-get install -y --no-install-recommends \
+    libudunits2-dev \
+    libgdal-dev \
+    libgeos-dev \
+    libproj-dev \
+    libmysqlclient-dev
+
+# Install R packages
+RUN R -e &quot;install.packages(c('shinyjs', 'shinyscreenshot', 'geosphere', 'raster', 'gstat', 'ggpubr', 'gridExtra', 'maps', 'rnpn','leaflet', 'terra','colorRamps', 'lubridate','digest','aws.s3','ptw','doSNOW','svglite','ggnewscale'), dependencies=TRUE)&quot;
+
+# Copy your Shiny app directory into the image
+COPY &lt;app name&gt; /srv/shiny-server/&lt;app name&gt;
+
+# Expose the default Shiny Server port
+EXPOSE 3838
+</code></pre>
+<p>We can store this file at the root directory.</p>
+<h3 id="configure-aws-ecr">Configure AWS ECR</h3>
+<p>We then set up an image repository in AWS ECR to store the Docker image of the Shiny app.</p>
+<ol>
+<li>Go to the AWS Management Console and log in.</li>
+<li>Search for <strong>Elastic Container Registry</strong> service and click <strong>Create repository</strong>. This is a private repository by default.</li>
+<li>Set the image repository name and click <strong>Create repository</strong>. The container image URI should be in the format of <code>&lt;AWS account number&gt;.dkr.ecr.&lt;AWS region&gt;.amazonaws.com/&lt;image repository name&gt;:latest</code>.</li>
+</ol>
+<h3 id="configure-aws-app-runner">Configure AWS App Runner</h3>
+<p>We then set up a service in AWS App Runner that will run the Docker image of the Shiny app.</p>
+<ol>
+<li>Go to the AWS Management Console and log in.</li>
+<li>Search for <strong>AWS App Runner</strong> service and click <strong>Create service</strong>.</li>
+<li>Choose <strong>Container registry</strong> as the repository type. Choose <strong>Amazon ECR</strong> as the provider. Set the container image URI by choosing the image repository name. Choose <strong>Automatic</strong> for the deployment trigger. Choose <strong>using existing service role</strong> of <strong>AppRunnerECRAccessRole</strong>. Click <strong>Next</strong>.</li>
+<li>Set the service name, CPU and memory. Expose <strong>Port</strong> <code>3838</code> as this is what the Shiny app uses. Customize other configurations as needed. Click <strong>Next</strong>.</li>
+<li>Review the settings and click <strong>Create and deploy</strong>. Note that the service ARN is in the form of <code>arn:aws:apprunner:&lt;AWS region&gt;:&lt;AWS account number&gt;:service/&lt;app name&gt;/&lt;resource ID&gt;</code>. Also note the default domain name of the service in the form of <code>&lt;service ID&gt;.&lt;AWS region&gt;.awsapprunner.com</code>.</li>
+</ol>
+<h3 id="configure-iam-role">Configure IAM role</h3>
+<p>As we are using GitHub Actions, we need to set up an IAM role that allows GitHub to assume a role for deploying to AWS services. Follow the steps below to set up the IAM role.
+<a href="https://aws.amazon.com/blogs/security/use-iam-roles-to-connect-github-actions-to-actions-in-aws/">reference</a></p>
+<ol>
+<li>Go to the AWS Management Console and log in.</li>
+<li>Search for <strong>IAM</strong> service and go to the IAM dashboard.</li>
+<li>Navigate to <strong>Access management</strong> and <strong>Identity providers</strong>.</li>
+<li>If there is not an identity provider called <code>token.actions.githubusercontent.com</code>, click on <strong>Add provider</strong> to create a new identity provider. For Provider type, choose OpenID Connect. For Provider URL, enter the URL of the GitHub OIDC IdP for this solution: <code>https://token.actions.githubusercontent.com</code>. For Audience, enter <code>sts.amazonaws.com</code>. This will allow the AWS Security Token Service (AWS STS) API to be called by this IdP. Add tag optionally. Click on <strong>Add provider</strong>.</li>
+<li>Navigate to <strong>Access management</strong> and <strong>Roles</strong>. Click on <strong>Create role</strong>. Choose <strong>Web identity</strong> as the trusted entity type. Select <code>token.actions.githubusercontent.com</code> as the identity provider. Choose <code>sts.amazonaws.com</code> as the audience. Enter GitHub organization, GitHub repository, and GitHub branch that match the app we intend to deploy.</li>
+<li>Add the necessary permission policies to the role. For ECR and App Runner, you can use the <code>AWSAppRunnerFullAccess</code>, <code>AWSAppRunnerServicePolicyForECRAccess</code>, and <code>AmazonEC2ContainerRegistryFullAccess</code> policies. Click on <strong>Next</strong>.</li>
+<li>Name the role and edit the trust policy. Here is my example.</li>
+</ol>
+<pre><code class="language-json">{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Principal&quot;: {
+                &quot;Federated&quot;: &quot;arn:aws:iam::&lt;aws account number&gt;:oidc-provider/token.actions.githubusercontent.com&quot;
+            },
+            &quot;Action&quot;: &quot;sts:AssumeRoleWithWebIdentity&quot;,
+            &quot;Condition&quot;: {
+                &quot;StringEquals&quot;: {
+                    &quot;token.actions.githubusercontent.com:aud&quot;: &quot;sts.amazonaws.com&quot;,
+                    &quot;token.actions.githubusercontent.com:sub&quot;: &quot;repo:&lt;GitHub organization&gt;/&lt;GitHub repository&gt;:ref:refs/heads/&lt;GitHub branch&gt;&quot;
+                }
+            }
+        }
+    ]
+}
+</code></pre>
+<ol start="8">
+<li>Review the role and click on <strong>Create role</strong>.</li>
+<li>View the role and copy the ARN of the role.</li>
+</ol>
+<h3 id="setting-up-github-secrets-1">Setting up GitHub secrets</h3>
+<p>We need to store the ARN of the IAM role in GitHub Secrets. You will need the GitHub secret <code>AWS_ROLE_ARN</code>.</p>
+<p>To add secrets to your repository:</p>
+<ol>
+<li>Go to the repository&rsquo;s <strong>Settings</strong>.</li>
+<li>Navigate to <strong>Secrets</strong>.</li>
+<li>Click on <strong>New repository secret</strong> and add the relevant keys.</li>
+</ol>
+<h2 id="creating-the-github-actions-workflow">Creating the GitHub Actions workflow</h2>
+<p>Now that we have the necessary credentials, we can create the GitHub Actions workflow to automate the build and deployment process.</p>
+<p>Create a <code>.github/workflows/deploy.yml</code> file in your repository. Below is my example. This YAML file defines a GitHub Actions workflow with two jobs:</p>
+<ol>
+<li>shinyapps-io: Deploys the Shiny app to shinyapps.io.</li>
+<li>app-runner: Builds a Docker image and pushes it to AWS ECR.</li>
+</ol>
+<pre><code class="language-yaml">name: Build and Deploy Shiny App to AWS
+
+on:
+  push:
+    branches:
+      - main  # or the branch you want to deploy from
+  pull_request:
+    branches:
+      - main
+
+# Permission can be added at job level or workflow level    
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  shinyapps-io:
+    runs-on: ubuntu-latest
+
+    container:
+      image: rocker/shiny-verse:latest # Because we are going to deploy to shinyapps.io using R code, we here use an image with R and some R packages pre-installed
+    
+    steps:
+    # Step 1: Checkout the code from GitHub
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Step 2: Install system dependencies
+    - name: Install system dependencies # Note that this step is similar to one in the Dockerfile, because we are installing similar dependencies that the Shiny app requires
+      run: |
+        apt-get update
+        apt-get install -y --no-install-recommends \
+          libudunits2-dev \
+          libgdal-dev \
+          libgeos-dev \
+          libproj-dev \
+          libmysqlclient-dev
+
+    # Step 3: Install R packages
+    - name: Install R packages # Note that this step is similar to one in the Dockerfile, because we are installing similar dependencies that the Shiny app requires
+      run: |
+        Rscript -e &quot;install.packages('rsconnect')&quot;
+        Rscript -e &quot;install.packages(c('shinyjs', 'shinyscreenshot', 'geosphere', 'raster', 'gstat', 'ggpubr', 'gridExtra', 'maps', 'rnpn','leaflet', 'terra','colorRamps', 'lubridate','digest','aws.s3','ptw','doSNOW','svglite','ggnewscale'), dependencies = TRUE)&quot;
+            
+    # Step 3: Deploy to shinyapps.io
+    - name: Deploy to shinyapps.io # We use a while loop here to retry the deployment in case of failure, often because that the previous deployment is still in progress
+      run: |
+      
+        retries=0
+        max_retries=10
+        while [[ $retries -lt $max_retries ]]
+        do
+          echo &quot;Attempt $((retries + 1)) of $max_retries&quot;
+          Rscript -e &quot;rsconnect::setAccountInfo(name='${{ secrets.SHINYAPPS_USER }}', token='${{ secrets.SHINYAPPS_TOKEN }}', secret='${{ secrets.SHINYAPPS_SECRET }}')&quot; &amp;&amp; \
+          Rscript -e &quot;rsconnect::deployApp(appDir = './phenowatch', appName = 'phenowatch', account = '${{ secrets.SHINYAPPS_USER }}', server = 'shinyapps.io', upload = T, forceUpdate = T)&quot; &amp;&amp; {
+            echo &quot;Deployment successful.&quot;
+            break
+          } || {
+            echo &quot;Deployment failed, retrying in 5 minutes...&quot;
+            sleep 300 # wait for 5 minutes before retrying
+            retries=$((retries + 1))
+          }
+        done
+      shell: bash # This is required because we are in a container but we are using bash syntax 
+      env:
+        RSCONNECT_USER: ${{ secrets.SHINYAPPS_USER }}
+        RSCONNECT_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+        RSCONNECT_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+
+  app-runner:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Step 1: Checkout the code from GitHub
+    - name: Checkout repository
+      uses: actions/checkout@v3
+        
+    # Step 2: Set up AWS CLI
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: &lt;AWS region&gt;
+    
+    # Step 3: Build Docker image
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      run: |
+        docker build -f Dockerfile -t &lt;image repository name&gt;:latest .
+
+    # Step 4: Push Docker image to AWS ECR
+    - name: Log in to Amazon ECR
+      run: |
+        aws ecr get-login-password --region &lt;AWS region&gt; | docker login --username AWS --password-stdin &lt;AWS account number&gt;.dkr.ecr.&lt;AWS region&gt;.amazonaws.com
+
+    - name: Tag Docker image
+      run: |
+        docker tag &lt;image repository name&gt;:latest &lt;AWS account number&gt;.dkr.ecr.&lt;AWS region&gt;.amazonaws.com/&lt;image repository name&gt;:latest
+
+    - name: Push Docker image to ECR
+      run: |
+        docker push &lt;AWS account number&gt;.dkr.ecr.&lt;AWS region&gt;.amazonaws.com/&lt;image repository name&gt;:latest
+
+    # Step 5: Deploy to AWS App Runner
+    # This step consists of resuming service, updating service, and pausing service. Omitting the details here. Please refer to GitHub repo for full code.
+</code></pre>
+<p>Push the changes to out repository to trigger the workflow. As the workflow is running, inspect the status by navigating to the <strong>Actions</strong> tab in our repository and selecting the most recent workflow. A successful workflow will be indicated by a green checkmark. If the workflow fails, you can click on the job to view the logs and debug the issue.</p>
+<h2 id="check-deployed-apps-and-debug">Check deployed apps and debug</h2>
+<p>For the app hosted on shinyapps.io, you can navigate to your shinyapps.io account and view the deployed app. There you will find the url of the app in the form of <code>https://&lt;username&gt;.shinyapps.io/&lt;appname&gt;</code>. You can also use <strong>Logs</strong> tab to diagnose any issues.</p>
+<p>For the app hosted on AWS App Runner, you can navigate to the AWS Management Console and go to the App Runner service. There you will find the url of the app in the form of <code>https://&lt;service-id&gt;.&lt;AWS region&gt;.awsapprunner.com</code>. You will need to add your Shiny app name to the end of the url <code>https://&lt;service-id&gt;.&lt;AWS region&gt;.awsapprunner.com/&lt;shiny-app-name&gt;</code>. You can also use the <strong>Deployment logs</strong> and <strong>Application logs</strong> to diagnose any issues.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/teaching/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
