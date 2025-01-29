@@ -60,7 +60,7 @@
 
   <article class="article">
     
-    <span class="article-duration">8 min read</span>
+    <span class="article-duration">10 min read</span>
     
 
     <h1 class="article-title">CI/CD</h1>
@@ -129,7 +129,7 @@ EXPOSE 3838
 <ol>
 <li>Go to the AWS Management Console and log in.</li>
 <li>Search for <strong>AWS App Runner</strong> service and click <strong>Create service</strong>.</li>
-<li>Choose <strong>Container registry</strong> as the repository type. Choose <strong>Amazon ECR</strong> as the provider. Set the container image URI by choosing the image repository name. Choose <strong>Automatic</strong> for the deployment trigger. Choose <strong>using existing service role</strong> of <strong>AppRunnerECRAccessRole</strong>. Click <strong>Next</strong>.</li>
+<li>Choose <strong>Container registry</strong> as the repository type. Choose <strong>Amazon ECR</strong> as the provider. Set the container image URI by choosing the image repository name. Choose <strong>Manual</strong> for the deployment trigger. (This is because I want to keep my app paused most of the time and only resume and deploy as needed.) Choose <strong>using existing service role</strong> of <strong>AppRunnerECRAccessRole</strong>. Click <strong>Next</strong>.</li>
 <li>Set the service name, CPU and memory. Expose <strong>Port</strong> <code>3838</code> as this is what the Shiny app uses. Customize other configurations as needed. Click <strong>Next</strong>.</li>
 <li>Review the settings and click <strong>Create and deploy</strong>. Note that the service ARN is in the form of <code>arn:aws:apprunner:&lt;AWS region&gt;:&lt;AWS account number&gt;:service/&lt;app name&gt;/&lt;resource ID&gt;</code>. Also note the default domain name of the service in the form of <code>&lt;service ID&gt;.&lt;AWS region&gt;.awsapprunner.com</code>.</li>
 </ol>
@@ -290,7 +290,81 @@ jobs:
         docker push &lt;AWS account number&gt;.dkr.ecr.&lt;AWS region&gt;.amazonaws.com/&lt;image repository name&gt;:latest
 
     # Step 5: Deploy to AWS App Runner
-    # This step consists of resuming service, updating service, and pausing service. Omitting the details here. Please refer to GitHub repo for full code.
+    - name: Resume service if needed
+      run: |
+        
+        status=$(aws apprunner describe-service \
+          --service-arn arn:aws:apprunner:&lt;AWS region&gt;:&lt;AWS account number&gt;:service/&lt;app name&gt;/&lt;resource ID&gt; \
+          --query 'Service.Status' --output text)
+        
+        if [[ &quot;$status&quot; == &quot;PAUSED&quot; ]]; then
+          echo &quot;Service is paused. Resuming now...&quot;
+          aws apprunner resume-service \
+            --service-arn arn:aws:apprunner:&lt;AWS region&gt;:&lt;AWS account number&gt;:service/&lt;app name&gt;/&lt;resource ID&gt; || {
+            echo &quot;Service resume failed, skipping this step.&quot;
+            exit 0
+          }
+          echo &quot;Service resumed.&quot;
+        else
+          echo &quot;Service is already running. No need to resume.&quot;
+        fi
+
+    - name: Update and deploy service
+      run: |
+      
+        retries=0
+        max_retries=10
+        while [[ $retries -lt $max_retries ]]
+        do
+          # Check if the service is in OPERATION_IN_PROGRESS state
+          status=$(aws apprunner describe-service --service-arn arn:aws:apprunner:&lt;AWS region&gt;:&lt;AWS account number&gt;:service/&lt;app name&gt;/&lt;resource ID&gt; --query 'Service.Status' --output text)
+
+          echo &quot;Attempt $((retries + 1)) of $max_retries&quot;
+          if [[ &quot;$status&quot; == &quot;OPERATION_IN_PROGRESS&quot; ]]; then
+            echo &quot;Service is still in operation. Waiting for it to finish...&quot;
+            sleep 60 # Wait for 1 minute before checking again
+            retries=$((retries + 1))
+            continue
+          fi
+        
+          # Proceed with the update if not in OPERATION_IN_PROGRESS state
+          aws apprunner update-service \
+            --service-arn arn:aws:apprunner:&lt;AWS region&gt;:&lt;AWS account number&gt;:service/&lt;app name&gt;/&lt;resource ID&gt; \
+            --source-configuration '{&quot;ImageRepository&quot;: {&quot;ImageRepositoryType&quot;: &quot;ECR&quot;,&quot;ImageIdentifier&quot;: &quot;&lt;AWS account number&gt;.dkr.ecr.&lt;AWS region&gt;.amazonaws.com/&lt;image repository name&gt;:latest&quot;,&quot;ImageConfiguration&quot;: {&quot;Port&quot;: &quot;3838&quot;}}}'
+          echo &quot;Service updated.&quot;
+          
+          aws apprunner start-deployment \
+            --service-arn arn:aws:apprunner:&lt;AWS region&gt;:&lt;AWS account number&gt;:service/&lt;app name&gt;/&lt;resource ID&gt;
+          echo &quot;Service deployed.&quot;
+          break
+        done
+    
+    - name: Pause service
+      run: |
+
+        retries=0
+        max_retries=10
+        
+        while [[ $retries -lt $max_retries ]]
+        do
+          # Check if the service is in OPERATION_IN_PROGRESS state
+          status=$(aws apprunner describe-service --service-arn arn:aws:apprunner:&lt;AWS region&gt;:&lt;AWS account number&gt;:service/&lt;app name&gt;/&lt;resource ID&gt; --query 'Service.Status' --output text)
+
+          echo &quot;Attempt $((retries + 1)) of $max_retries&quot;
+          if [[ &quot;$status&quot; == &quot;OPERATION_IN_PROGRESS&quot; ]]; then
+            echo &quot;Service is still in operation. Waiting for it to finish...&quot;
+            sleep 60 # Wait for 1 minute before checking again
+            retries=$((retries + 1))
+            continue
+          fi
+        
+          # Proceed with pausing if not in OPERATION_IN_PROGRESS state
+          aws apprunner pause-service \
+          --service-arn arn:aws:apprunner:&lt;AWS region&gt;:&lt;AWS account number&gt;:service/&lt;app name&gt;/&lt;resource ID&gt; 
+        
+          echo &quot;Service paused.&quot;
+          break
+        done
 </code></pre>
 <p>Push the changes to out repository to trigger the workflow. As the workflow is running, inspect the status by navigating to the <strong>Actions</strong> tab in our repository and selecting the most recent workflow. A successful workflow will be indicated by a green checkmark. If the workflow fails, you can click on the job to view the logs and debug the issue.</p>
 <h2 id="check-deployed-apps-and-debug">Check deployed apps and debug</h2>
