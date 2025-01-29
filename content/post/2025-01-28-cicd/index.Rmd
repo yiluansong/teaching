@@ -13,9 +13,11 @@ We will specifically be focusing on deploying a Shiny app, but the concepts can 
 
 ## Prepare for deployment on Shinyapps.io
 
+To host a Shiny app on shinyapps.io, you need to have a [shinyapps.io](https://www.shinyapps.io/) account. You can sign up for a free account if you don't have one.
+
 ### Get credentials
 
-To host a Shiny app on shinyapps.io, you need to have a [shinyapps.io](https://www.shinyapps.io/) account. You can sign up for a free account if you don't have one. Follow the steps below to get your shinyapps.io credentials.
+Follow the steps below to get your shinyapps.io credentials.
 
 1. Go to your [shinyapps.io](https://www.shinyapps.io/) account and log in.
 2. Navigate to **Account** and **Tokens**.
