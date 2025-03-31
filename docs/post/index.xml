@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Yiluan Song&#39;s teaching website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 28 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://yiluansong.github.io/teaching/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 31 Mar 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://yiluansong.github.io/teaching/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Secret removal from GitHub repository</title>
+      <link>https://yiluansong.github.io/teaching/2025/03/31/secret-removal-from-github-repository/</link>
+      <pubDate>Mon, 31 Mar 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://yiluansong.github.io/teaching/2025/03/31/secret-removal-from-github-repository/</guid>
+      <description>Introduction Recently, I received a notification that my GitHub repository contains a secret. A secret is a sensitive information that should not be shared publicly, including passwords, API keys, and tokens. We should avoid storing secrets in a GitHub repository to prevent unauthorized access, even when the repository is private. It is not sufficient to simply delete the secret from the repository, as the commit history may still contain the secret.</description>
+    </item>
+    
     <item>
       <title>CI/CD</title>
       <link>https://yiluansong.github.io/teaching/2025/01/28/ci/cd/</link>

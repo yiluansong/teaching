@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.118.2">
+
+
+<title>Secret removal from GitHub repository - Yiluan Song&#39;s teaching website</title>
+<meta property="og:title" content="Secret removal from GitHub repository - Yiluan Song&#39;s teaching website">
+
+
+  <link href='https://yiluansong.github.io/teaching/otter.png' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/teaching/css/fonts.css" media="all">
+<link rel="stylesheet" href="/teaching/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="https://yiluansong.github.io/teaching/" class="nav-logo">
+    <img src="/teaching/images/otter.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/teaching/about/">About</a></li>
+    
+    <li><a href="https://github.com/yiluansong/teaching">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Secret removal from GitHub repository</h1>
+
+    
+    <span class="article-date">2025-03-31</span>
+    
+
+    <div class="article-content">
+      
+      <h2 id="introduction">Introduction</h2>
+<p>Recently, I received a notification that my GitHub repository contains a secret. A secret is a sensitive information that should not be shared publicly, including passwords, API keys, and tokens. We should avoid storing secrets in a GitHub repository to prevent unauthorized access, even when the repository is private. It is not sufficient to simply delete the secret from the repository, as the commit history may still contain the secret. In this blog, I will demonstrate how to remove secrets from a GitHub repository.</p>
+<h2 id="scan-for-secrets">Scan for secrets</h2>
+<p>I use <a href="https://www.gitguardian.com/">GitGuardian</a> to scan for secrets in my GitHub repositories. GitGuardian can be integrated with GitHub to automatically scan for secrets in repositories.</p>
+<p>You would need to sign up for GitGuardian and authorize access to your GitHub repositories. Once the integration is set up, GitGuardian will scan the repositories you own (could be those in an organization) for secrets.</p>
+<p>In the &ldquo;Monitored perimeter&rdquo; section, I can see the repositories that have been scanned, with their health status being &ldquo;At risk&rdquo; or &ldquo;Safe.&rdquo;</p>
+<p>If you click on a repository, you can see the secrets that have been detected. For each secret, you can see the file path, the type of secret, and the commit that introduced the secret.</p>
+<h2 id="remove-secrets">Remove secrets</h2>
+<p>You can still remove the leaked API key from your Git commit history, but simply deleting or modifying the file in a new commit won’t be enough.</p>
+<p>We can use the tool <code>git-filter-repo</code> to remove the secret from the commit history. First, install the tool by running the following command in the terminal.</p>
+<pre><code class="language-bash">pip install git-filter-repo
+</code></pre>
+<p>Alternatively, you can install the tool directly to the folder of your choice.</p>
+<pre><code class="language-bash">mkdir -p &lt;path for installation&gt;
+cd &lt;path for installation&gt;
+curl -LO https://raw.githubusercontent.com/newren/git-filter-repo/main/git-filter-repo
+chmod +x git-filter-repo
+export PATH=&lt;path for installation&gt;:$PATH
+</code></pre>
+<p>Check if you have the tool installed correctly.</p>
+<pre><code class="language-bash">git filter-repo --version
+</code></pre>
+<p>You need to clone the repository as a mirror repository. Note that if you already have this repository cloned in your local environment and have been working on it, you should push your changes and delete this local clone, because we need to work on a fresh clone of the repository.</p>
+<pre><code class="language-bash">cd &lt;where you usually store your GitHub repositories&gt;
+git clone --mirror https://github.com/&lt;your username or organization name&gt;/&lt;your repo&gt;.git
+</code></pre>
+<p>When you use the <code>git clone --mirror</code> command, you might notice that the repo is detached from the remote repository. This is normal.</p>
+<p>We will then go into this repository and use the <code>git filter-repo</code> command to remove the secret. Replace <code>&lt;your-secret-key&gt;</code> with the actual secret you want to remove. You should have obtained the leaked secret from GitGuardian just now. It could be a password, an API key, or a token. If you have multiple secrets to remove, repeat the <code>git filter-repo</code> command for each secret.</p>
+<pre><code class="language-bash">cd yourrepo.git
+git filter-repo --replace-text &lt;(echo &quot;&lt;your-secret-key&gt;==&gt;REMOVED&quot;)
+</code></pre>
+<p>Now that we have cleaned the local repository, we will re-add the remote and force push the cleaned repository.</p>
+<pre><code class="language-bash">git remote add origin https://github.com/&lt;your username or organization name&gt;/&lt;your repo&gt;.git
+git push --force --all
+</code></pre>
+<h2 id="wrap-up">Wrap up</h2>
+<p>You are strongly suggested to revoke the leaked secret and generate a new one. Do this in the service where the secret was generated. For example, if it was an API key for Google Cloud, you should revoke the key in the Google Cloud Console and generate a new one.</p>
+<p>Back in your repository, You should update the secret, as well as how it is used. Do not write the secret in your code. You might want to use environment variables or a secret manager to store the secret.</p>
+<p>Here is an example of using environment variables to connect to an account for <code>shinyapps.io</code> in R.</p>
+<pre><code class="language-r"># Load existing .env file (if it exists)
+dotenv::load_dot_env(&quot;.env&quot;)
+
+# Check each required variable and prompt if missing
+name &lt;- check_and_prompt_env(&quot;RSCONNECT_NAME&quot;, &quot;Enter shinyapps.io name: &quot;)
+token &lt;- check_and_prompt_env(&quot;RSCONNECT_TOKEN&quot;, &quot;Enter shinyapps.io token: &quot;)
+secret &lt;- check_and_prompt_env(&quot;RSCONNECT_SECRET&quot;, &quot;Enter shinyapps.io secret: &quot;)
+
+# Reload .env file to ensure new values are available
+dotenv::load_dot_env(&quot;.env&quot;)
+
+# Set account info
+rsconnect::setAccountInfo(
+  name = name,
+  token = token,
+  secret = secret
+)
+</code></pre>
+<p>Now you can go to GitGuardian and mark the incident(s) as resolved. You can select the repository and click &ldquo;Scan&rdquo; to make sure you have removed all secrets successfully.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/teaching/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
