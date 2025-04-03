@@ -99,7 +99,7 @@ git clone --mirror https://github.com/&lt;your username or organization name&gt;
 </code></pre>
 <p>When you use the <code>git clone --mirror</code> command, you might notice that the repo is detached from the remote repository. This is normal.</p>
 <p>We will then go into this repository and use the <code>git filter-repo</code> command to remove the secret. Replace <code>&lt;your-secret-key&gt;</code> with the actual secret you want to remove. You should have obtained the leaked secret from GitGuardian just now. It could be a password, an API key, or a token. If you have multiple secrets to remove, repeat the <code>git filter-repo</code> command for each secret.</p>
-<pre><code class="language-bash">cd yourrepo.git
+<pre><code class="language-bash">cd &lt;your repo&gt;
 git filter-repo --replace-text &lt;(echo &quot;&lt;your-secret-key&gt;==&gt;REMOVED&quot;)
 </code></pre>
 <p>Now that we have cleaned the local repository, we will re-add the remote and force push the cleaned repository.</p>

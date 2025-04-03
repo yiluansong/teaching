@@ -56,7 +56,7 @@ When you use the `git clone --mirror` command, you might notice that the repo is
 We will then go into this repository and use the `git filter-repo` command to remove the secret. Replace `<your-secret-key>` with the actual secret you want to remove. You should have obtained the leaked secret from GitGuardian just now. It could be a password, an API key, or a token. If you have multiple secrets to remove, repeat the `git filter-repo` command for each secret.
 
 ```bash
-cd yourrepo.git
+cd <your repo>
 git filter-repo --replace-text <(echo "<your-secret-key>==>REMOVED")
 ```
 
